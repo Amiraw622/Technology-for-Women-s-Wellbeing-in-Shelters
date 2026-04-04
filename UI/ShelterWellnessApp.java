@@ -1,0 +1,587 @@
+package UI;
+import javax.swing.*;
+import javax.swing.border.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.*;
+import java.util.Random;
+
+/**
+ * Shelter Wellness Companion — Discreet Lifestyle App
+ *
+ * Home screen has 3 innocent options:
+ *   1. Talk to Me (free casual chat)
+ *   2. Today's Music (daily music recommendation)
+ *   3. Today's Recipe (daily food recipe)
+ *
+ * After viewing music or recipe detail → "Does this match your mood?"
+ *   YES → "Enjoy your day!"
+ *   NO  → gentle inquiry → 3 support options:
+ *         Help & Support | Music & Exercise | Talk
+ */
+public class ShelterWellnessApp extends JFrame {
+
+    private CardLayout cardLayout;
+    private JPanel cardPanel;
+
+    static final Color BG_PRIMARY = new Color(28, 24, 38);
+    static final Color BG_SECONDARY = new Color(35, 30, 48);
+    static final Color TEXT_PRIMARY = new Color(232, 226, 240);
+    static final Color TEXT_SECONDARY = new Color(180, 170, 195);
+    static final Color TEXT_MUTED = new Color(140, 132, 160);
+    static final Color ACCENT_TEAL = new Color(93, 202, 165);
+    static final Color ACCENT_WARM = new Color(239, 159, 39);
+    static final Color ACCENT_ROSE = new Color(220, 120, 140);
+    static final Color ACCENT_PINK = new Color(212, 83, 126);
+    static final Color ACCENT_PURPLE = new Color(176, 124, 216);
+    static final Color ACCENT_CORAL = new Color(216, 90, 48);
+    static final Color CARD_BG = new Color(255, 255, 255, 10);
+    static final Color CARD_HOVER = new Color(255, 255, 255, 20);
+    static final Color CARD_BORDER = new Color(255, 255, 255, 20);
+
+    static final Font FONT_TITLE = new Font("SansSerif", Font.BOLD, 26);
+    static final Font FONT_SUBTITLE = new Font("SansSerif", Font.PLAIN, 14);
+    static final Font FONT_CARD_TITLE = new Font("SansSerif", Font.BOLD, 17);
+    static final Font FONT_CARD_DESC = new Font("SansSerif", Font.PLAIN, 13);
+    static final Font FONT_BODY = new Font("SansSerif", Font.PLAIN, 14);
+    static final Font FONT_SMALL = new Font("SansSerif", Font.PLAIN, 12);
+    static final Font FONT_BUTTON = new Font("SansSerif", Font.BOLD, 14);
+    static final Font FONT_CHAT = new Font("SansSerif", Font.PLAIN, 14);
+    static final Font FONT_DETAIL_TITLE = new Font("SansSerif", Font.BOLD, 22);
+
+    static final String[][] DAILY_MUSIC = {
+        {"Morning Calm",       "Soft piano melodies to start your day gently",
+         "A peaceful piano piece with gentle dynamics.\nClose your eyes, breathe slowly,\nand let the melody carry you."},
+        {"Afternoon Breeze",   "Light acoustic guitar with nature sounds",
+         "Acoustic fingerpicking layered with\nbirdsong and a gentle stream.\nPerfect for a mindful break."},
+        {"Sunset Glow",        "Warm ambient tones for winding down",
+         "Warm pads and soft chimes that\nfade like the last light of day.\nLet your shoulders drop and relax."},
+        {"Rainy Day Comfort",  "Gentle rain with soft strings",
+         "The steady rhythm of raindrops\naccompanied by a cello melody.\nWrap yourself in something cozy."},
+        {"Garden Morning",     "Birds chirping with light flute music",
+         "A wooden flute dances over\na carpet of birdsong and rustling leaves.\nImagine sunshine on your face."},
+    };
+
+    static final String[][] DAILY_RECIPES = {
+        {"Honey Lemon Tea",      "Warm, soothing, and easy to make",
+         "Ingredients:\n  - 1 cup hot water\n  - 1 tbsp honey\n  - Juice of half a lemon\n\nStir honey into hot water.\nAdd lemon juice. Sip slowly."},
+        {"Banana Oat Pancakes",  "Simple, healthy, and comforting",
+         "Ingredients:\n  - 1 ripe banana\n  - 1/2 cup oats\n  - 1 egg\n  - Pinch of cinnamon\n\nMash banana, mix all together.\nCook small pancakes on low heat."},
+        {"Veggie Soup",          "Nourishing and warming for the soul",
+         "Ingredients:\n  - 2 carrots, 1 potato, 1 onion\n  - 4 cups broth\n  - Salt, pepper, herbs\n\nChop veggies, simmer in broth\n20 min until tender."},
+        {"Fruit & Yogurt Bowl",  "Fresh, light, and energizing",
+         "Ingredients:\n  - 1 cup yogurt\n  - Handful of berries\n  - 1 tbsp granola\n  - Drizzle of honey\n\nLayer yogurt, fruit, granola.\nDrizzle honey on top."},
+        {"Cinnamon Toast",       "Quick comfort with a warm aroma",
+         "Ingredients:\n  - 2 slices bread\n  - Butter\n  - Cinnamon + sugar\n\nToast bread, spread butter.\nSprinkle cinnamon sugar.\nEnjoy the warm aroma."},
+    };
+
+    static final String[][] RESOURCES = {
+        {"National DV Hotline", "1-800-799-7233", "24/7 confidential support"},
+        {"Crisis Text Line",   "Text HOME to 741741", "Free crisis counseling"},
+        {"RAINN",              "1-800-656-4673", "Sexual assault support"},
+        {"Suicide & Crisis",   "988", "Lifeline - call or text"},
+        {"Women's Law",        "womenslaw.org", "Legal info for survivors"},
+        {"NAMI Helpline",      "1-800-950-6264", "Mental health support"},
+    };
+
+    private int todayMusic, todayRecipe;
+
+    public ShelterWellnessApp() {
+        super("Your personal assistant");
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setSize(480, 780);
+        setMinimumSize(new Dimension(400, 700));
+        setLocationRelativeTo(null);
+
+        Random rand = new Random();
+        todayMusic = rand.nextInt(DAILY_MUSIC.length);
+        todayRecipe = rand.nextInt(DAILY_RECIPES.length);
+
+        cardLayout = new CardLayout();
+        cardPanel = new JPanel(cardLayout);
+        cardPanel.setBackground(BG_PRIMARY);
+
+        cardPanel.add(createHomeScreen(), "home");
+        cardPanel.add(createDetailScreen(DAILY_MUSIC[todayMusic][0], DAILY_MUSIC[todayMusic][1],
+            DAILY_MUSIC[todayMusic][2], "\u266B", ACCENT_WARM, "TODAY'S MUSIC", "\u25B6  Play now"), "musicdetail");
+        cardPanel.add(createDetailScreen(DAILY_RECIPES[todayRecipe][0], DAILY_RECIPES[todayRecipe][1],
+            DAILY_RECIPES[todayRecipe][2], "\u2615", ACCENT_ROSE, "TODAY'S RECIPE", "\u2665  Save recipe"), "recipedetail");
+        cardPanel.add(createMoodCheckScreen(), "moodcheck");
+        cardPanel.add(createEnjoyScreen(), "enjoy");
+        cardPanel.add(createWhatsGoingOnScreen(), "whatsup");
+        cardPanel.add(createSupportOptionsScreen(), "support");
+        cardPanel.add(createHelpResourcesScreen(), "help");
+        cardPanel.add(createMusicExerciseScreen(), "music");
+        cardPanel.add(buildChatScreen("Talk", ACCENT_CORAL, true, "support"), "talk");
+        cardPanel.add(buildChatScreen("Chat", ACCENT_TEAL, false, "home"), "freechat");
+
+        add(cardPanel);
+        cardLayout.show(cardPanel, "home");
+    }
+
+    // ═══════ HOME — 3 cards ═══════
+    private JPanel createHomeScreen() {
+        return new GradientPanel() {
+            int hov = -1;
+            final Rectangle[] cards = { new Rectangle(), new Rectangle(), new Rectangle() };
+            {
+                addMouseMotionListener(new MouseMotionAdapter() {
+                    public void mouseMoved(MouseEvent e) {
+                        int prev = hov; hov = -1;
+                        for (int i = 0; i < 3; i++) if (cards[i].contains(e.getPoint())) { hov = i; break; }
+                        setCursor(hov >= 0 ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) : Cursor.getDefaultCursor());
+                        if (prev != hov) repaint();
+                    }
+                });
+                addMouseListener(new MouseAdapter() {
+                    public void mouseClicked(MouseEvent e) {
+                        if (cards[0].contains(e.getPoint())) navigate("freechat");
+                        else if (cards[1].contains(e.getPoint())) navigate("musicdetail");
+                        else if (cards[2].contains(e.getPoint())) navigate("recipedetail");
+                    }
+                    public void mouseExited(MouseEvent e) { if (hov != -1) { hov = -1; repaint(); } }
+                });
+            }
+            @Override protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = setup(g);
+                int w = getWidth(), cx = w / 2;
+                drawAnimal(g2, cx, 50, 0.95f, true);
+                g2.setFont(FONT_TITLE);
+                gradText(g2, "Good day!", cx, 158, ACCENT_TEAL, new Color(160, 220, 200));
+                g2.setFont(FONT_SUBTITLE); g2.setColor(TEXT_MUTED);
+                ctr(g2, "Your personal assistant", cx, 180);
+
+                int cW = Math.min(360, w - 48), cX = (w - cW) / 2, cH = 88, gap = 14, y = 206;
+
+                drawCard(g2, cX, y, cW, cH, hov == 0, ACCENT_TEAL);
+                cards[0].setBounds(cX, y, cW, cH);
+                cardIcon(g2, cX, y, "\u2661", ACCENT_TEAL);
+                cardText(g2, cX, y, "Talk to Me", "Share your thoughts with me",
+                    "I'm lways here for you", ACCENT_TEAL, hov == 0);
+
+                y += cH + gap;
+                drawCard(g2, cX, y, cW, cH, hov == 1, ACCENT_WARM);
+                cards[1].setBounds(cX, y, cW, cH);
+                cardIcon(g2, cX, y, "\u266B", ACCENT_WARM);
+                cardText(g2, cX, y, "Today's Music", DAILY_MUSIC[todayMusic][0],
+                    DAILY_MUSIC[todayMusic][1], ACCENT_WARM, hov == 1);
+
+                y += cH + gap;
+                drawCard(g2, cX, y, cW, cH, hov == 2, ACCENT_ROSE);
+                cards[2].setBounds(cX, y, cW, cH);
+                cardIcon(g2, cX, y, "\u2615", ACCENT_ROSE);
+                cardText(g2, cX, y, "Today's Recipe", DAILY_RECIPES[todayRecipe][0],
+                    DAILY_RECIPES[todayRecipe][1], ACCENT_ROSE, hov == 2);
+
+                g2.setFont(FONT_SMALL);
+                g2.setColor(new Color(TEXT_MUTED.getRed(), TEXT_MUTED.getGreen(), TEXT_MUTED.getBlue(), 100));
+                ctr(g2, "\"Take things one moment at a time.\"", cx, getHeight() - 36);
+                g2.dispose();
+            }
+        };
+    }
+
+    // ═══════ DETAIL (music or recipe) ═══════
+    private JPanel createDetailScreen(String title, String subtitle, String body,
+                                       String icon, Color accent, String label, String actionText) {
+        return new GradientPanel() {
+            int hov = -1;
+            final Rectangle backBtn = new Rectangle(), moodBtn = new Rectangle(), actBtn = new Rectangle();
+            {
+                MouseAdapter ma = new MouseAdapter() {
+                    public void mouseMoved(MouseEvent e) {
+                        int p = hov;
+                        hov = backBtn.contains(e.getPoint()) ? 0 : moodBtn.contains(e.getPoint()) ? 1
+                            : actBtn.contains(e.getPoint()) ? 2 : -1;
+                        setCursor(hov >= 0 ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) : Cursor.getDefaultCursor());
+                        if (p != hov) repaint();
+                    }
+                    public void mouseClicked(MouseEvent e) {
+                        if (backBtn.contains(e.getPoint())) navigate("home");
+                        else if (moodBtn.contains(e.getPoint())) navigate("moodcheck");
+                    }
+                    public void mouseExited(MouseEvent e) { if (hov != -1) { hov = -1; repaint(); } }
+                };
+                addMouseListener(ma); addMouseMotionListener(ma);
+            }
+            @Override protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = setup(g);
+                int w = getWidth(), cx = w / 2, cW = Math.min(380, w - 40), cX = (w - cW) / 2;
+                drawBack(g2, 20, 20, backBtn);
+                g2.setFont(FONT_SMALL); g2.setColor(accent); ctr(g2, label, cx, 72);
+                g2.setFont(new Font("SansSerif", Font.PLAIN, 48)); g2.setColor(accent); ctr(g2, icon, cx, 120);
+                g2.setFont(FONT_DETAIL_TITLE); g2.setColor(TEXT_PRIMARY); ctr(g2, title, cx, 160);
+                g2.setFont(FONT_SUBTITLE); g2.setColor(TEXT_SECONDARY); ctr(g2, subtitle, cx, 184);
+
+                int abW = 180, abH = 40, abX = cx - abW / 2, abY = 206;
+                actBtn.setBounds(abX, abY, abW, abH);
+                g2.setColor(hov == 2 ? alphaColor(accent, 35) : CARD_BG);
+                g2.fillRoundRect(abX, abY, abW, abH, 20, 20);
+                g2.setColor(alphaColor(accent, 60)); g2.setStroke(new BasicStroke(1));
+                g2.drawRoundRect(abX, abY, abW, abH, 20, 20);
+                g2.setFont(FONT_BUTTON); g2.setColor(accent); ctr(g2, actionText, cx, abY + 26);
+
+                int bY = 268, bH = 200;
+                g2.setColor(CARD_BG); g2.fillRoundRect(cX, bY, cW, bH, 16, 16);
+                g2.setColor(CARD_BORDER); g2.setStroke(new BasicStroke(0.5f));
+                g2.drawRoundRect(cX, bY, cW, bH, 16, 16);
+                g2.setFont(FONT_BODY); g2.setColor(TEXT_SECONDARY);
+                int tY = bY + 28;
+                for (String line : body.split("\n")) { g2.drawString(line, cX + 20, tY); tY += 22; }
+
+                int mbW = 300, mbH = 52, mbX = cx - mbW / 2, mbY = 500;
+                moodBtn.setBounds(mbX, mbY, mbW, mbH);
+                g2.setColor(hov == 1 ? alphaColor(ACCENT_PURPLE, 28) : CARD_BG);
+                g2.fillRoundRect(mbX, mbY, mbW, mbH, 16, 16);
+                g2.setColor(alphaColor(ACCENT_PURPLE, hov == 1 ? 80 : 40));
+                g2.setStroke(new BasicStroke(1.2f));
+                g2.drawRoundRect(mbX, mbY, mbW, mbH, 16, 16);
+                g2.setFont(FONT_BUTTON); g2.setColor(hov == 1 ? ACCENT_PURPLE : TEXT_SECONDARY);
+                ctr(g2, "Does this match your mood? \u2192", cx, mbY + 32);
+                g2.dispose();
+            }
+        };
+    }
+
+    // ═══════ MOOD CHECK ═══════
+    private JPanel createMoodCheckScreen() {
+        return new GradientPanel() {
+            int hov = -1;
+            final Rectangle backBtn = new Rectangle(), yesBtn = new Rectangle(), noBtn = new Rectangle();
+            {
+                MouseAdapter ma = new MouseAdapter() {
+                    public void mouseMoved(MouseEvent e) {
+                        int p = hov;
+                        hov = backBtn.contains(e.getPoint()) ? 0 : yesBtn.contains(e.getPoint()) ? 1
+                            : noBtn.contains(e.getPoint()) ? 2 : -1;
+                        setCursor(hov >= 0 ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) : Cursor.getDefaultCursor());
+                        if (p != hov) repaint();
+                    }
+                    public void mouseClicked(MouseEvent e) {
+                        if (backBtn.contains(e.getPoint())) navigate("home");
+                        else if (yesBtn.contains(e.getPoint())) navigate("enjoy");
+                        else if (noBtn.contains(e.getPoint())) navigate("whatsup");
+                    }
+                };
+                addMouseListener(ma); addMouseMotionListener(ma);
+            }
+            @Override protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = setup(g);
+                int w = getWidth(), cx = w / 2;
+                drawBack(g2, 20, 20, backBtn);
+                drawAnimal(g2, cx, 60, 0.85f, true);
+                g2.setFont(FONT_TITLE); g2.setColor(TEXT_PRIMARY);
+                ctr(g2, "Does this match", cx, 180); ctr(g2, "your vibe today?", cx, 210);
+                g2.setFont(FONT_SUBTITLE); g2.setColor(TEXT_MUTED);
+                ctr(g2, "We want to pick the best things for you", cx, 240);
+                int bW = 260, bH = 54, bX = cx - bW / 2;
+                yesBtn.setBounds(bX, 280, bW, bH);
+                g2.setColor(hov == 1 ? alphaColor(ACCENT_TEAL, 35) : CARD_BG);
+                g2.fillRoundRect(bX, 280, bW, bH, 16, 16);
+                g2.setColor(alphaColor(ACCENT_TEAL, 70)); g2.setStroke(new BasicStroke(1.2f));
+                g2.drawRoundRect(bX, 280, bW, bH, 16, 16);
+                g2.setFont(FONT_BUTTON); g2.setColor(ACCENT_TEAL); ctr(g2, "Yes, feels right!", cx, 313);
+                noBtn.setBounds(bX, 352, bW, bH);
+                g2.setColor(hov == 2 ? alphaColor(ACCENT_PURPLE, 35) : CARD_BG);
+                g2.fillRoundRect(bX, 352, bW, bH, 16, 16);
+                g2.setColor(alphaColor(ACCENT_PURPLE, 70));
+                g2.drawRoundRect(bX, 352, bW, bH, 16, 16);
+                g2.setFont(FONT_BUTTON); g2.setColor(ACCENT_PURPLE); ctr(g2, "Not really...", cx, 385);
+                g2.dispose();
+            }
+        };
+    }
+
+    // ═══════ ENJOY ═══════
+    private JPanel createEnjoyScreen() {
+        return new GradientPanel() {
+            final Rectangle btn = new Rectangle(); int hov = -1;
+            {
+                MouseAdapter ma = new MouseAdapter() {
+                    public void mouseMoved(MouseEvent e) { int p=hov; hov=btn.contains(e.getPoint())?0:-1;
+                        setCursor(hov>=0?Cursor.getPredefinedCursor(Cursor.HAND_CURSOR):Cursor.getDefaultCursor());
+                        if(p!=hov)repaint(); }
+                    public void mouseClicked(MouseEvent e) { if(btn.contains(e.getPoint()))navigate("home"); }
+                };
+                addMouseListener(ma); addMouseMotionListener(ma);
+            }
+            @Override protected void paintComponent(Graphics g) {
+                super.paintComponent(g); Graphics2D g2=setup(g); int w=getWidth(),cx=w/2;
+                drawAnimal(g2,cx,100,1.2f,true);
+                g2.setFont(FONT_TITLE); gradText(g2,"Enjoy your day!",cx,240,ACCENT_TEAL,ACCENT_WARM);
+                g2.setFont(FONT_SUBTITLE); g2.setColor(TEXT_MUTED); ctr(g2,"I'm always here if you need me",cx,270);
+                int bX=cx-90,bY=310; btn.setBounds(bX,bY,180,44);
+                g2.setColor(hov==0?CARD_HOVER:CARD_BG); g2.fillRoundRect(bX,bY,180,44,14,14);
+                g2.setColor(CARD_BORDER); g2.setStroke(new BasicStroke(1)); g2.drawRoundRect(bX,bY,180,44,14,14);
+                g2.setFont(FONT_BUTTON); g2.setColor(TEXT_SECONDARY); ctr(g2,"\u2190  Home",cx,bY+28);
+                g2.dispose();
+            }
+        };
+    }
+
+    // ═══════ WHAT'S GOING ON ═══════
+    private JPanel createWhatsGoingOnScreen() {
+        return new GradientPanel() {
+            final Rectangle cont = new Rectangle(), back = new Rectangle(); int hov = -1;
+            {
+                MouseAdapter ma = new MouseAdapter() {
+                    public void mouseMoved(MouseEvent e) { int p=hov;
+                        hov=back.contains(e.getPoint())?0:cont.contains(e.getPoint())?1:-1;
+                        setCursor(hov>=0?Cursor.getPredefinedCursor(Cursor.HAND_CURSOR):Cursor.getDefaultCursor());
+                        if(p!=hov)repaint(); }
+                    public void mouseClicked(MouseEvent e) {
+                        if(back.contains(e.getPoint()))navigate("moodcheck");
+                        else if(cont.contains(e.getPoint()))navigate("support"); }
+                };
+                addMouseListener(ma); addMouseMotionListener(ma);
+            }
+            @Override protected void paintComponent(Graphics g) {
+                super.paintComponent(g); Graphics2D g2=setup(g); int w=getWidth(),cx=w/2;
+                drawBack(g2,20,20,back); drawAnimal(g2,cx,60,0.9f,false);
+                g2.setFont(FONT_TITLE); g2.setColor(TEXT_PRIMARY); ctr(g2,"That's okay.",cx,175);
+                g2.setFont(FONT_BODY); g2.setColor(TEXT_SECONDARY);
+                ctr(g2,"Some days are harder than others.",cx,210);
+                ctr(g2,"I'm here, and I'd like to help",cx,232);
+                ctr(g2,"if you'd let me.",cx,254);
+                int bW=280,bH=50,bX=cx-bW/2,bY=300; cont.setBounds(bX,bY,bW,bH);
+                g2.setColor(hov==1?alphaColor(ACCENT_PURPLE,30):CARD_BG);
+                g2.fillRoundRect(bX,bY,bW,bH,16,16);
+                g2.setColor(alphaColor(ACCENT_PURPLE,70)); g2.setStroke(new BasicStroke(1.2f));
+                g2.drawRoundRect(bX,bY,bW,bH,16,16);
+                g2.setFont(FONT_BUTTON); g2.setColor(ACCENT_PURPLE); ctr(g2,"Show me what can help",cx,bY+31);
+                g2.dispose();
+            }
+        };
+    }
+
+    // ═══════ SUPPORT OPTIONS ═══════
+    private JPanel createSupportOptionsScreen() {
+        return new GradientPanel() {
+            int hov=-1; final Rectangle back=new Rectangle();
+            final Rectangle[] cards={new Rectangle(),new Rectangle(),new Rectangle()};
+            final String[] t={"Help & Support","Music & Exercise","Talk to Someone"};
+            final String[] d={"Resources, hotlines, websites","Calming sounds, breathing, stretches","I'm here to listen to you"};
+            final Color[] c={ACCENT_PINK,ACCENT_PURPLE,ACCENT_CORAL};
+            final String[] sc={"help","music","talk"};
+            final String[] ic={"\u2764","\u266B","\u270E"};
+            {
+                MouseAdapter ma=new MouseAdapter(){
+                    public void mouseMoved(MouseEvent e){int p=hov;hov=back.contains(e.getPoint())?10:-1;
+                        for(int i=0;i<3;i++)if(cards[i].contains(e.getPoint())){hov=i;break;}
+                        setCursor(hov>=0?Cursor.getPredefinedCursor(Cursor.HAND_CURSOR):Cursor.getDefaultCursor());
+                        if(p!=hov)repaint();}
+                    public void mouseClicked(MouseEvent e){if(back.contains(e.getPoint()))navigate("whatsup");
+                        for(int i=0;i<3;i++)if(cards[i].contains(e.getPoint())){navigate(sc[i]);return;}}
+                };
+                addMouseListener(ma);addMouseMotionListener(ma);
+            }
+            @Override protected void paintComponent(Graphics g){
+                super.paintComponent(g);Graphics2D g2=setup(g);int w=getWidth(),cx=w/2;
+                int cW=Math.min(360,w-48),cX=(w-cW)/2;
+                drawBack(g2,20,20,back); drawAnimal(g2,cx,50,0.7f,false);
+                g2.setFont(FONT_TITLE); gradText(g2,"I'm here for you",cx,150,ACCENT_PURPLE,ACCENT_PINK);
+                g2.setFont(FONT_SUBTITLE); g2.setColor(TEXT_MUTED); ctr(g2,"Choose what feels right",cx,175);
+                int y=200;
+                for(int i=0;i<3;i++){Color cl=c[i];boolean h=hov==i;int cH=90;
+                    cards[i].setBounds(cX,y,cW,cH);
+                    if(h){g2.setColor(alphaColor(cl,12));g2.fillRoundRect(cX-4,y-4,cW+8,cH+8,24,24);}
+                    g2.setColor(h?alphaColor(cl,18):CARD_BG);g2.fillRoundRect(cX,y,cW,cH,18,18);
+                    g2.setColor(alphaColor(cl,h?100:30));g2.setStroke(new BasicStroke(1.2f));
+                    g2.drawRoundRect(cX,y,cW,cH,18,18);
+                    g2.setColor(alphaColor(cl,25));g2.fillOval(cX+16,y+20,50,50);
+                    g2.setFont(new Font("SansSerif",Font.PLAIN,22));g2.setColor(cl);ctr(g2,ic[i],cX+41,y+52);
+                    g2.setFont(FONT_CARD_TITLE);g2.setColor(h?cl:TEXT_PRIMARY);g2.drawString(t[i],cX+80,y+40);
+                    g2.setFont(FONT_CARD_DESC);g2.setColor(TEXT_MUTED);g2.drawString(d[i],cX+80,y+62);
+                    if(h){g2.setFont(new Font("SansSerif",Font.PLAIN,18));g2.setColor(cl);
+                        g2.drawString("\u2192",cX+cW-34,y+cH/2+6);}
+                    y+=cH+14;}
+                g2.setFont(FONT_SMALL);g2.setColor(alphaColor(TEXT_MUTED,100));
+                ctr(g2,"You are stronger than you know",cx,y+24);g2.dispose();
+            }
+        };
+    }
+
+    // ═══════ HELP RESOURCES ═══════
+    private JPanel createHelpResourcesScreen() {
+        JPanel p=new JPanel(new BorderLayout());p.setBackground(BG_PRIMARY);
+        JButton bk=styledBtn("\u2190 Back");bk.addActionListener(e->navigate("support"));
+        JPanel top=new JPanel(new FlowLayout(FlowLayout.LEFT));top.setBackground(BG_SECONDARY);
+        top.setBorder(BorderFactory.createEmptyBorder(8,8,8,8));top.add(bk);
+        JLabel tt=new JLabel("Help & Support");tt.setFont(FONT_TITLE);tt.setForeground(ACCENT_PINK);
+        tt.setBorder(BorderFactory.createEmptyBorder(4,12,0,0));top.add(tt);p.add(top,BorderLayout.NORTH);
+        JPanel list=new JPanel();list.setLayout(new BoxLayout(list,BoxLayout.Y_AXIS));
+        list.setBackground(BG_PRIMARY);list.setBorder(BorderFactory.createEmptyBorder(12,16,16,16));
+        JLabel pr=new JLabel("<html><div style='padding:8px;color:#A088B0;font-size:11px;'>"
+            +"\uD83D\uDD12 Your privacy matters. If in immediate danger, call 911.</div></html>");
+        pr.setAlignmentX(Component.LEFT_ALIGNMENT);list.add(pr);list.add(Box.createVerticalStrut(8));
+        for(String[] r:RESOURCES){JPanel c=new JPanel();c.setLayout(new BoxLayout(c,BoxLayout.Y_AXIS));
+            c.setBackground(new Color(40,35,55));c.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(70,60,90),1),BorderFactory.createEmptyBorder(12,16,12,16)));
+            c.setAlignmentX(Component.LEFT_ALIGNMENT);c.setMaximumSize(new Dimension(Integer.MAX_VALUE,90));
+            JLabel n=new JLabel(r[0]);n.setFont(FONT_CARD_TITLE);n.setForeground(TEXT_PRIMARY);c.add(n);
+            JLabel ph=new JLabel("\u260E  "+r[1]);ph.setFont(FONT_BODY);ph.setForeground(ACCENT_TEAL);
+            ph.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));c.add(ph);
+            JLabel d=new JLabel(r[2]);d.setFont(FONT_SMALL);d.setForeground(TEXT_MUTED);c.add(d);
+            list.add(c);list.add(Box.createVerticalStrut(8));}
+        JScrollPane sc=new JScrollPane(list);sc.setBorder(null);sc.getViewport().setBackground(BG_PRIMARY);
+        sc.getVerticalScrollBar().setUnitIncrement(16);p.add(sc,BorderLayout.CENTER);return p;
+    }
+
+    // ═══════ MUSIC & EXERCISE ═══════
+    private JPanel createMusicExerciseScreen() {
+        JPanel p=new JPanel(new BorderLayout());p.setBackground(BG_PRIMARY);
+        JButton bk=styledBtn("\u2190 Back");bk.addActionListener(e->navigate("support"));
+        JPanel top=new JPanel(new FlowLayout(FlowLayout.LEFT));top.setBackground(BG_SECONDARY);
+        top.setBorder(BorderFactory.createEmptyBorder(8,8,8,8));top.add(bk);
+        JLabel tt=new JLabel("Music & Exercise");tt.setFont(FONT_TITLE);tt.setForeground(ACCENT_PURPLE);
+        tt.setBorder(BorderFactory.createEmptyBorder(4,12,0,0));top.add(tt);p.add(top,BorderLayout.NORTH);
+        JPanel ct=new JPanel();ct.setLayout(new BoxLayout(ct,BoxLayout.Y_AXIS));ct.setBackground(BG_PRIMARY);
+        ct.setBorder(BorderFactory.createEmptyBorder(16,16,16,16));
+        secLabel(ct,"Calming Sounds");
+        String[][] snd={{"\uD83C\uDF27","Gentle Rain"},{"\uD83C\uDF0A","Ocean Waves"},
+            {"\uD83C\uDF3F","Forest Birds"},{"\uD83C\uDFB9","Soft Piano"},
+            {"\uD83C\uDF19","Night Crickets"},{"\uD83D\uDD25","Warm Fireplace"}};
+        for(String[] s:snd){ct.add(optBtn(s[0]+"  "+s[1],ACCENT_PURPLE));ct.add(Box.createVerticalStrut(6));}
+        ct.add(Box.createVerticalStrut(16));secLabel(ct,"Quick Exercises");
+        String[][] ex={{"\uD83E\uDDD8","Deep Breathing (2 min)"},{"\uD83D\uDCAA","Gentle Stretching (5 min)"},
+            {"\uD83D\uDE4F","Body Scan Relaxation (3 min)"}};
+        for(String[] e:ex){ct.add(optBtn(e[0]+"  "+e[1],ACCENT_TEAL));ct.add(Box.createVerticalStrut(6));}
+        JScrollPane sc=new JScrollPane(ct);sc.setBorder(null);sc.getViewport().setBackground(BG_PRIMARY);
+        sc.getVerticalScrollBar().setUnitIncrement(16);p.add(sc,BorderLayout.CENTER);return p;
+    }
+
+    // ═══════ CHAT ═══════
+    private JPanel buildChatScreen(String label,Color accent,boolean sup,String backTo){
+        JPanel p=new JPanel(new BorderLayout());p.setBackground(BG_PRIMARY);
+        JButton bk=styledBtn("\u2190 Back");bk.addActionListener(e->navigate(backTo));
+        JPanel top=new JPanel(new FlowLayout(FlowLayout.LEFT));top.setBackground(BG_SECONDARY);
+        top.setBorder(BorderFactory.createEmptyBorder(8,8,8,8));top.add(bk);
+        JLabel tt=new JLabel(label);tt.setFont(FONT_CARD_TITLE);tt.setForeground(accent);
+        tt.setBorder(BorderFactory.createEmptyBorder(4,12,0,0));top.add(tt);p.add(top,BorderLayout.NORTH);
+        JPanel chat=new JPanel();chat.setLayout(new BoxLayout(chat,BoxLayout.Y_AXIS));
+        chat.setBackground(BG_PRIMARY);chat.setBorder(BorderFactory.createEmptyBorder(12,12,12,12));
+        bubble(chat,sup?"I'm here for you. Share anything, or we can sit together quietly."
+            :"Hey there! What's on your mind? I'm happy to chat!",false,accent);
+        JScrollPane cs=new JScrollPane(chat);cs.setBorder(null);cs.getViewport().setBackground(BG_PRIMARY);
+        cs.getVerticalScrollBar().setUnitIncrement(16);p.add(cs,BorderLayout.CENTER);
+        JPanel bar=new JPanel(new BorderLayout(8,0));bar.setBackground(BG_SECONDARY);
+        bar.setBorder(BorderFactory.createEmptyBorder(10,12,10,12));
+        JTextField in=new JTextField();in.setFont(FONT_CHAT);in.setBackground(new Color(50,45,65));
+        in.setForeground(TEXT_PRIMARY);in.setCaretColor(TEXT_PRIMARY);
+        in.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(70,60,90)),
+            BorderFactory.createEmptyBorder(8,12,8,12)));
+        JButton send=new JButton("\u2191");send.setFont(new Font("SansSerif",Font.BOLD,18));
+        send.setForeground(accent);send.setBackground(alphaColor(accent,25));
+        send.setBorder(BorderFactory.createEmptyBorder(6,14,6,14));send.setFocusPainted(false);
+        send.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        Runnable act=()->{String t2=in.getText().trim();if(t2.isEmpty())return;
+            bubble(chat,t2,true,accent);in.setText("");
+            Timer tm=new Timer(600+(int)(Math.random()*800),ev->{
+                bubble(chat,reply(t2,sup),false,accent);chat.revalidate();
+                SwingUtilities.invokeLater(()->{JScrollBar sb=cs.getVerticalScrollBar();sb.setValue(sb.getMaximum());});});
+            tm.setRepeats(false);tm.start();};
+        send.addActionListener(e->act.run());in.addActionListener(e->act.run());
+        bar.add(in,BorderLayout.CENTER);bar.add(send,BorderLayout.EAST);p.add(bar,BorderLayout.SOUTH);return p;
+    }
+
+    void bubble(JPanel a,String t,boolean u,Color ac){
+        JPanel b=new JPanel(new BorderLayout());b.setAlignmentX(u?Component.RIGHT_ALIGNMENT:Component.LEFT_ALIGNMENT);
+        b.setMaximumSize(new Dimension(320,200));
+        JLabel l=new JLabel("<html><div style='padding:10px 14px;width:240px;color:"+(u?"#E8E2F0":"#D0C8E0")
+            +";font-size:13px;'>"+t+"</div></html>");l.setOpaque(true);
+        l.setBackground(u?alphaColor(ac,30):new Color(50,45,65));
+        l.setBorder(BorderFactory.createLineBorder(alphaColor(ac,u?40:15),1));
+        b.setOpaque(false);b.add(l);a.add(b);a.add(Box.createVerticalStrut(8));
+    }
+
+    String reply(String m,boolean s){String l=m.toLowerCase();
+        if(s){if(l.contains("sad")||l.contains("cry")||l.contains("hurt"))return"Your feelings are valid. You're not alone.";
+            if(l.contains("scared")||l.contains("afraid"))return"It's okay to feel scared. You are safe here.";
+            if(l.contains("angry")||l.contains("mad"))return"Your anger is valid \u2014 you deserve better.";
+            if(l.contains("alone")||l.contains("lonely"))return"You are not alone. I'm here, and people care.";
+            if(l.contains("tired"))return"Rest is so important. Be gentle with yourself.";
+            if(l.contains("thank"))return"You don't need to thank me. You deserve kindness.";
+            String[] r={"I'm listening. Take your time.","You are stronger than you realize.",
+                "It's okay to not be okay. I'm here.","Be gentle with yourself.","You matter."};
+            return r[(int)(Math.random()*r.length)];}
+        else{if(l.contains("hello")||l.contains("hi")||l.contains("hey"))return"Hello! What made you smile today?";
+            if(l.contains("thank"))return"You're welcome! Your happiness brightens my day!";
+            String[] r={"That's lovely! Tell me more!","Keep shining!","What else is on your mind?",
+                "I'm glad you shared that!","What else brings you joy?"};
+            return r[(int)(Math.random()*r.length)];}
+    }
+
+    // ═══════ UTILITIES ═══════
+    void navigate(String s){cardLayout.show(cardPanel,s);}
+    static Graphics2D setup(Graphics g){Graphics2D g2=(Graphics2D)g.create();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);return g2;}
+    static void ctr(Graphics2D g,String t,int cx,int y){FontMetrics f=g.getFontMetrics();g.drawString(t,cx-f.stringWidth(t)/2,y);}
+    static void gradText(Graphics2D g,String t,int cx,int y,Color a,Color b){FontMetrics f=g.getFontMetrics();
+        int tx=cx-f.stringWidth(t)/2;g.setPaint(new GradientPaint(tx,y-20,a,tx+f.stringWidth(t),y,b));g.drawString(t,tx,y);}
+    static Color alphaColor(Color c,int a){return new Color(c.getRed(),c.getGreen(),c.getBlue(),a);}
+    static void drawCard(Graphics2D g,int x,int y,int w,int h,boolean hov,Color ac){
+        if(hov){g.setColor(alphaColor(ac,10));g.fillRoundRect(x-3,y-3,w+6,h+6,22,22);}
+        g.setColor(hov?alphaColor(ac,15):CARD_BG);g.fillRoundRect(x,y,w,h,18,18);
+        g.setColor(alphaColor(ac,hov?80:25));g.setStroke(new BasicStroke(1));g.drawRoundRect(x,y,w,h,18,18);}
+    static void cardIcon(Graphics2D g,int x,int y,String ic,Color ac){
+        g.setFont(new Font("SansSerif",Font.PLAIN,28));g.setColor(ac);g.drawString(ic,x+22,y+48);}
+    static void cardText(Graphics2D g,int x,int y,String t,String d,String h,Color ac,boolean hov){
+        g.setFont(FONT_CARD_TITLE);g.setColor(hov?ac:TEXT_PRIMARY);g.drawString(t,x+64,y+34);
+        g.setFont(FONT_CARD_DESC);g.setColor(TEXT_SECONDARY);g.drawString(d,x+64,y+54);
+        g.setFont(FONT_SMALL);g.setColor(alphaColor(ac,90));g.drawString(h,x+64,y+74);}
+    static void drawBack(Graphics2D g,int x,int y,Rectangle b){int bw=80,bh=30;b.setBounds(x,y,bw,bh);
+        g.setColor(new Color(255,255,255,12));g.fillRoundRect(x,y,bw,bh,10,10);
+        g.setColor(CARD_BORDER);g.drawRoundRect(x,y,bw,bh,10,10);
+        g.setFont(new Font("SansSerif",Font.BOLD,12));g.setColor(TEXT_SECONDARY);g.drawString("\u2190 Back",x+14,y+20);}
+    static void drawAnimal(Graphics2D g,int cx,int ty,float s,boolean happy){
+        AffineTransform o=g.getTransform();g.translate(cx,ty+40*s);g.scale(s,s);
+        Color body=happy?new Color(168,230,207):new Color(200,181,212);
+        Color inner=happy?new Color(200,240,225):new Color(240,214,232);
+        g.setColor(body);g.fillOval(-30,5,60,40);g.setColor(new Color(124,111,138));g.drawOval(-30,5,60,40);
+        AffineTransform et=g.getTransform();
+        g.rotate(Math.toRadians(-12),-8,-11);g.setColor(body);g.fillOval(-18,-28,20,34);
+        g.setColor(new Color(124,111,138));g.drawOval(-18,-28,20,34);g.setColor(inner);g.fillOval(-14,-22,12,20);
+        g.setTransform(et);g.rotate(Math.toRadians(12),8,-11);g.setColor(body);g.fillOval(-2,-28,20,34);
+        g.setColor(new Color(124,111,138));g.drawOval(-2,-28,20,34);g.setColor(inner);g.fillOval(2,-22,12,20);
+        g.setTransform(et);g.setColor(body);g.fillOval(-24,-18,48,42);
+        g.setColor(new Color(124,111,138));g.drawOval(-24,-18,48,42);
+        g.setColor(new Color(74,63,85));g.fillOval(-12,-4,8,10);g.fillOval(4,-4,8,10);
+        g.setColor(Color.WHITE);g.fillOval(-11,-5,3,3);g.fillOval(5,-5,3,3);
+        g.setColor(new Color(232,160,191));g.fillOval(-3,6,7,5);
+        g.setColor(new Color(124,111,138));g.setStroke(new BasicStroke(1.5f,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
+        if(happy)g.draw(new QuadCurve2D.Float(-7,13,0,20,7,13));
+        else g.draw(new QuadCurve2D.Float(-7,15,0,11,7,15));
+        g.setColor(new Color(240,214,232,80));g.fillOval(-22,2,10,8);g.fillOval(12,2,10,8);
+        g.setTransform(o);}
+
+    JButton styledBtn(String t){JButton b=new JButton(t);b.setFont(new Font("SansSerif",Font.BOLD,12));
+        b.setForeground(TEXT_SECONDARY);b.setBackground(new Color(50,45,65));
+        b.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(70,60,90)),
+            BorderFactory.createEmptyBorder(6,14,6,14)));b.setFocusPainted(false);
+        b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));return b;}
+    JButton optBtn(String t,Color ac){JButton b=new JButton(t);b.setFont(FONT_BODY);b.setForeground(TEXT_PRIMARY);
+        b.setBackground(alphaColor(ac,15));b.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(alphaColor(ac,40)),BorderFactory.createEmptyBorder(12,16,12,16)));
+        b.setFocusPainted(false);b.setAlignmentX(Component.LEFT_ALIGNMENT);
+        b.setMaximumSize(new Dimension(Integer.MAX_VALUE,48));
+        b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        b.addMouseListener(new MouseAdapter(){
+            public void mouseEntered(MouseEvent e){b.setBackground(alphaColor(ac,30));}
+            public void mouseExited(MouseEvent e){b.setBackground(alphaColor(ac,15));}});return b;}
+    void secLabel(JPanel p,String t){JLabel l=new JLabel(t);l.setFont(new Font("SansSerif",Font.BOLD,15));
+        l.setForeground(TEXT_SECONDARY);l.setAlignmentX(Component.LEFT_ALIGNMENT);
+        l.setBorder(BorderFactory.createEmptyBorder(0,0,8,0));p.add(l);}
+
+    static class GradientPanel extends JPanel{
+        @Override protected void paintComponent(Graphics g){Graphics2D g2=(Graphics2D)g;
+            g2.setPaint(new GradientPaint(0,0,BG_PRIMARY,0,getHeight(),new Color(26,32,42)));
+            g2.fillRect(0,0,getWidth(),getHeight());}}
+
+    public static void main(String[] args){SwingUtilities.invokeLater(()->{
+        try{UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());}catch(Exception ignored){}
+        new ShelterWellnessApp().setVisible(true);});}
+}
