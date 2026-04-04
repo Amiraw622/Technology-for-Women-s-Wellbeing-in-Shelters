@@ -29,13 +29,13 @@ public class ShelterWellnessApp extends JFrame {
     private JPanel cardPanel;
     private Image animalImage;
 
-    static final Color BG_PRIMARY = new Color(255, 204, 138);
+    static final Color BG_PRIMARY = new Color(255, 255, 255);
     static final Color BG_SECONDARY = new Color(35, 30, 48);
-    static final Color TEXT_PRIMARY = new Color(232, 226, 240);
+    static final Color TEXT_PRIMARY = new Color(140, 66, 45);
     static final Color TEXT_SECONDARY = new Color(180, 170, 195);
     static final Color TEXT_MUTED = new Color(140, 132, 160);
-    static final Color ACCENT_TEAL = new Color(93, 202, 165);
-    static final Color ACCENT_WARM = new Color(239, 159, 39);
+    static final Color ACCENT_TEAL = new Color(103, 20, 65);
+    static final Color ACCENT_WARM = new Color(39, 0, 100);
     static final Color ACCENT_ROSE = new Color(220, 120, 140);
     static final Color ACCENT_PINK = new Color(212, 83, 126);
     static final Color ACCENT_PURPLE = new Color(176, 124, 216);
@@ -265,31 +265,31 @@ public class ShelterWellnessApp extends JFrame {
                 int w = getWidth(), cx = w / 2;
                 drawAnimal(g2, cx, 50, 0.95f, true);
                 g2.setFont(FONT_TITLE);
-                g2.setColor(new Color(80, 50, 20));
-                ctr(g2, "Here's something gentle for you today💛", cx, 208);
+                g2.setColor(new Color(140, 76, 45));
+                ctr(g2, "Here's something gentle for you today💛", cx, 218);
                 g2.setFont(FONT_SUBTITLE);
                 g2.setColor(TEXT_MUTED);
-                ctr(g2, "I'm here with you", cx, 230);
+                ctr(g2, "I'm here with you", cx, 246);
 
-                int cW = Math.min(360, w - 48), cX = (w - cW) / 2, cH = 88, gap = 14, y = 206;
+                int cW = Math.min(360, w - 48), cX = (w - cW) / 2, cH = 88, gap = 14, y = 260;
 
                 drawCard(g2, cX, y, cW, cH, hov == 0, ACCENT_TEAL);
                 cards[0].setBounds(cX, y, cW, cH);
-                cardIcon(g2, cX, y, "\u2661", ACCENT_TEAL);
+                cardIcon(g2, cX, y, "\u2661", ACCENT_TEAL, hov == 0);
                 cardText(g2, cX, y, "Talk to Me", "Share your thoughts with me",
                         "I'm always here for you", ACCENT_TEAL, hov == 0);
 
                 y += cH + gap;
                 drawCard(g2, cX, y, cW, cH, hov == 1, ACCENT_WARM);
                 cards[1].setBounds(cX, y, cW, cH);
-                cardIcon(g2, cX, y, "\u266B", ACCENT_WARM);
+                cardIcon(g2, cX, y, "\u266B", ACCENT_WARM, hov == 1);
                 cardText(g2, cX, y, "Today's Music", DAILY_MUSIC[todayMusic][0],
                         DAILY_MUSIC[todayMusic][1], ACCENT_WARM, hov == 1);
 
                 y += cH + gap;
                 drawCard(g2, cX, y, cW, cH, hov == 2, ACCENT_ROSE);
                 cards[2].setBounds(cX, y, cW, cH);
-                cardIcon(g2, cX, y, "\u2615", ACCENT_ROSE);
+                cardIcon(g2, cX, y, "\u2615", ACCENT_ROSE, hov == 2);
                 cardText(g2, cX, y, "Today's Recipe", DAILY_RECIPES[todayRecipe][0],
                         DAILY_RECIPES[todayRecipe][1], ACCENT_ROSE, hov == 2);
 
