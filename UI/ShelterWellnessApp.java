@@ -245,6 +245,8 @@ public class ShelterWellnessApp extends JFrame {
                             navigate("recipedetail");
                         else if (cards[3].contains(e.getPoint()))
                             navigate("help");
+                        else if (cards[3].contains(e.getPoint()))
+                            navigate("supportChoice");
 
                     }
 
@@ -269,29 +271,33 @@ public class ShelterWellnessApp extends JFrame {
                 ctr(g2, "Here's something gentle for you today 💛", cx, 218);
                 g2.setFont(FONT_SUBTITLE);
                 g2.setColor(TEXT_MUTED);
-                ctr(g2, "I'm here with you", cx, 246);
 
-                int cW = Math.min(360, w - 48), cX = (w - cW) / 2, cH = 88, gap = 14, y = 260;
+                int cW = Math.min(340, w - 48), cX = (w - cW) / 2, cH = 70, gap = 18, y = 240;
 
                 drawCard(g2, cX, y, cW, cH, hov == 0, ACCENT_TEAL);
                 cards[0].setBounds(cX, y, cW, cH);
                 cardIcon(g2, cX, y, "\u2661", ACCENT_TEAL, hov == 0);
-                cardText(g2, cX, y, "Talk to me", "What's your mood?",
+                cardText(g2, cX, y, "Talk to me",
                         "I'm always here for you", ACCENT_TEAL, hov == 0);
 
                 y += cH + gap;
                 drawCard(g2, cX, y, cW, cH, hov == 1, ACCENT_WARM);
                 cards[1].setBounds(cX, y, cW, cH);
                 cardIcon(g2, cX, y, "\u266B", ACCENT_WARM, hov == 1);
-                cardText(g2, cX, y, "Listen", DAILY_MUSIC[todayMusic][0],
-                        DAILY_MUSIC[todayMusic][1], ACCENT_WARM, hov == 1);
+                cardText(g2, cX, y, "Listen", "Wanna listen to some music?",
+                        ACCENT_WARM, hov == 1);
 
                 y += cH + gap;
                 drawCard(g2, cX, y, cW, cH, hov == 2, ACCENT_ROSE);
                 cards[2].setBounds(cX, y, cW, cH);
                 cardIcon(g2, cX, y, "\u2615", ACCENT_ROSE, hov == 2);
-                cardText(g2, cX, y, "Cook", DAILY_RECIPES[todayRecipe][0],
-                        DAILY_RECIPES[todayRecipe][1], ACCENT_ROSE, hov == 2);
+                cardText(g2, cX, y, "Cook", "Find something to cook?", ACCENT_ROSE, hov == 2);
+
+                y += cH + gap;
+                drawCard(g2, cX, y, cW, cH, hov == 3, ACCENT_PURPLE);
+                cards[3].setBounds(cX, y, cW, cH);
+                cardIcon(g2, cX, y, "\u2728", ACCENT_PURPLE, hov == 3);
+                cardText(g2, cX, y, "Do something", "Find what feels right", ACCENT_PURPLE, hov == 3);
 
                 g2.setFont(FONT_SMALL);
                 g2.setColor(new Color(180, 120, 130));
@@ -644,7 +650,7 @@ public class ShelterWellnessApp extends JFrame {
         return new GradientPanel() {
             int hov = -1;
             final Rectangle back = new Rectangle();
-            final Rectangle[] cards = { new Rectangle(), new Rectangle(), new Rectangle() };
+            final Rectangle[] cards = { new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle() };
             final String[] t = { "Help & Support", "Music & Exercise", "Talk to Someone" };
             final String[] d = { "Resources, hotlines, websites", "Calming sounds, breathing, stretches",
                     "I'm here to listen to you" };
@@ -656,7 +662,7 @@ public class ShelterWellnessApp extends JFrame {
                     public void mouseMoved(MouseEvent e) {
                         int p = hov;
                         hov = back.contains(e.getPoint()) ? 10 : -1;
-                        for (int i = 0; i < 3; i++)
+                        for (int i = 0; i < 4; i++)
                             if (cards[i].contains(e.getPoint())) {
                                 hov = i;
                                 break;
@@ -1024,16 +1030,14 @@ public class ShelterWellnessApp extends JFrame {
         g.drawString(ic, x + 22, y + 48);
     }
 
-    static void cardText(Graphics2D g, int x, int y, String t, String d, String h, Color ac, boolean hov) {
+    static void cardText(Graphics2D g, int x, int y, String t, String h, Color ac, boolean hov) {
         g.setFont(FONT_CARD_TITLE);
         g.setColor(hov ? ac : TEXT_PRIMARY);
-        g.drawString(t, x + 64, y + 34);
-        g.setFont(FONT_CARD_DESC);
-        g.setColor(TEXT_SECONDARY);
-        g.drawString(d, x + 64, y + 54);
+        g.drawString(t, x + 64, y + 33);
+
         g.setFont(FONT_SMALL);
         g.setColor(alphaColor(ac, 90));
-        g.drawString(h, x + 64, y + 74);
+        g.drawString(h, x + 64, y + 53);
     }
 
     static void drawBack(Graphics2D g, int x, int y, Rectangle b) {
