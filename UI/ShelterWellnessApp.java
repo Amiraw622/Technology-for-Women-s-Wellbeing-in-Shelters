@@ -172,30 +172,30 @@ public class ShelterWellnessApp extends JFrame {
                 drawAnimal(g2, cx, 50, 0.95f, true);
                 g2.setFont(FONT_TITLE);
                 g2.setColor(new Color(80, 50, 20));
-                ctr(g2, "Here's something gentle for you today💛", cx, 208);
+                ctr(g2, "Here's something gentle for you today💛", cx, 218);
                 g2.setFont(FONT_SUBTITLE);
                 g2.setColor(TEXT_MUTED);
-                ctr(g2, "I'm here with you", cx, 230);
+                ctr(g2, "I'm here with you", cx, 246);
 
-                int cW = Math.min(360, w - 48), cX = (w - cW) / 2, cH = 88, gap = 14, y = 206;
+                int cW = Math.min(360, w - 48), cX = (w - cW) / 2, cH = 88, gap = 14, y = 260;
 
                 drawCard(g2, cX, y, cW, cH, hov == 0, ACCENT_TEAL);
                 cards[0].setBounds(cX, y, cW, cH);
-                cardIcon(g2, cX, y, "\u2661", ACCENT_TEAL);
+                cardIcon(g2, cX, y, "\u2661", ACCENT_TEAL, hov == 0);
                 cardText(g2, cX, y, "Talk to Me", "Share your thoughts with me",
                         "I'm always here for you", ACCENT_TEAL, hov == 0);
 
                 y += cH + gap;
                 drawCard(g2, cX, y, cW, cH, hov == 1, ACCENT_WARM);
                 cards[1].setBounds(cX, y, cW, cH);
-                cardIcon(g2, cX, y, "\u266B", ACCENT_WARM);
+                cardIcon(g2, cX, y, "\u266B", ACCENT_WARM, hov == 1);
                 cardText(g2, cX, y, "Today's Music", DAILY_MUSIC[todayMusic][0],
                         DAILY_MUSIC[todayMusic][1], ACCENT_WARM, hov == 1);
 
                 y += cH + gap;
                 drawCard(g2, cX, y, cW, cH, hov == 2, ACCENT_ROSE);
                 cards[2].setBounds(cX, y, cW, cH);
-                cardIcon(g2, cX, y, "\u2615", ACCENT_ROSE);
+                cardIcon(g2, cX, y, "\u2615", ACCENT_ROSE, hov == 2);
                 cardText(g2, cX, y, "Today's Recipe", DAILY_RECIPES[todayRecipe][0],
                         DAILY_RECIPES[todayRecipe][1], ACCENT_ROSE, hov == 2);
 
@@ -850,23 +850,30 @@ public class ShelterWellnessApp extends JFrame {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);return g2;}
     static void ctr(Graphics2D g,String t,int cx,int y){FontMetrics f=g.getFontMetrics();g.drawString(t,cx-f.stringWidth(t)/2,y);}
+
     static void gradText(Graphics2D g,String t,int cx,int y,Color a,Color b){FontMetrics f=g.getFontMetrics();
+
         int tx=cx-f.stringWidth(t)/2;g.setPaint(new GradientPaint(tx,y-20,a,tx+f.stringWidth(t),y,b));g.drawString(t,tx,y);}
     static Color alphaColor(Color c,int a){return new Color(c.getRed(),c.getGreen(),c.getBlue(),a);}
+
     static void drawCard(Graphics2D g,int x,int y,int w,int h,boolean hov,Color ac){
         if(hov){g.setColor(alphaColor(ac,10));g.fillRoundRect(x-3,y-3,w+6,h+6,22,22);}
         g.setColor(hov?alphaColor(ac,15):CARD_BG);g.fillRoundRect(x,y,w,h,18,18);
         g.setColor(alphaColor(ac,hov?80:25));g.setStroke(new BasicStroke(1));g.drawRoundRect(x,y,w,h,18,18);}
-    static void cardIcon(Graphics2D g,int x,int y,String ic,Color ac){
-        g.setFont(new Font("SansSerif",Font.PLAIN,28));g.setColor(ac);g.drawString(ic,x+22,y+48);}
+
+    static void cardIcon(Graphics2D g,int x,int y,String ic,Color nc, boolean hov){
+        g.setFont(new Font("SansSerif",Font.PLAIN,28));g.setColor(hov ? new Color(120, 100, 50) : nc);g.drawString(ic,x+22,y+48);}
+
     static void cardText(Graphics2D g,int x,int y,String t,String d,String h,Color ac,boolean hov){
         g.setFont(FONT_CARD_TITLE);g.setColor(hov?ac:TEXT_PRIMARY);g.drawString(t,x+64,y+34);
         g.setFont(FONT_CARD_DESC);g.setColor(TEXT_SECONDARY);g.drawString(d,x+64,y+54);
         g.setFont(FONT_SMALL);g.setColor(alphaColor(ac,90));g.drawString(h,x+64,y+74);}
+        
     static void drawBack(Graphics2D g,int x,int y,Rectangle b){int bw=80,bh=30;b.setBounds(x,y,bw,bh);
         g.setColor(new Color(255,255,255,12));g.fillRoundRect(x,y,bw,bh,10,10);
         g.setColor(CARD_BORDER);g.drawRoundRect(x,y,bw,bh,10,10);
         g.setFont(new Font("SansSerif",Font.BOLD,12));g.setColor(TEXT_SECONDARY);g.drawString("\u2190 Back",x+14,y+20);}
+
     void drawAnimal(Graphics2D g, int cx, int ty, float s, boolean happy) {
         int imgW = (int)(260 * s);
         int imgH = (int)(200 * s);
