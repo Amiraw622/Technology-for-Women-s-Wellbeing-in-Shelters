@@ -31,12 +31,12 @@ public class ShelterWellnessApp extends JFrame {
     static final Color BG_PRIMARY = new Color(255, 255, 255);
     static final Color BG_SECONDARY = new Color(35, 30, 48);
     static final Color TEXT_PRIMARY = new Color(140, 66, 45);
-    static final Color TEXT_SECONDARY = new Color(180, 170, 195);
-    static final Color TEXT_MUTED = new Color(140, 132, 160);
+    static final Color TEXT_SECONDARY = new Color(170, 120, 135);
+    static final Color TEXT_MUTED = new Color(180, 122, 130);
     static final Color ACCENT_TEAL = new Color(103, 20, 65);
     static final Color ACCENT_WARM = new Color(39, 0, 100);
-    static final Color ACCENT_ROSE = new Color(220, 120, 140);
-    static final Color ACCENT_PINK = new Color(212, 83, 126);
+    static final Color ACCENT_ROSE = new Color(220, 20, 40);
+    static final Color ACCENT_PINK = new Color(232, 63, 86);
     static final Color ACCENT_PURPLE = new Color(176, 124, 216);
     static final Color ACCENT_CORAL = new Color(216, 90, 48);
     static final Color CARD_BG = new Color(255, 255, 255, 10);
@@ -54,15 +54,15 @@ public class ShelterWellnessApp extends JFrame {
     static final Font FONT_DETAIL_TITLE = new Font("SansSerif", Font.BOLD, 22);
 
     static final String[][] DAILY_MUSIC = {
-            { "Morning Calm", "Soft piano melodies to start your day gently",
+            { "Morning Calm", "Relaxing music to help you find peace",
                     "A peaceful piano piece with gentle dynamics.\nClose your eyes, breathe slowly,\nand let the melody carry you." },
-            { "Afternoon Breeze", "Light acoustic guitar with nature sounds",
+            { "Afternoon Breeze", "Relaxing music to help you find peace",
                     "Acoustic fingerpicking layered with\nbirdsong and a gentle stream.\nPerfect for a mindful break." },
-            { "Sunset Glow", "Warm ambient tones for winding down",
+            { "Sunset Glow", "Relaxing music to help you find peace",
                     "Warm pads and soft chimes that\nfade like the last light of day.\nLet your shoulders drop and relax." },
-            { "Rainy Day Comfort", "Gentle rain with soft strings",
+            { "Rainy Day Comfort", "Relaxing music to help you find peace",
                     "The steady rhythm of raindrops\naccompanied by a cello melody.\nWrap yourself in something cozy." },
-            { "Garden Morning", "Birds chirping with light flute music",
+            { "Garden Morning", "Relaxing music to help you find peace",
                     "A wooden flute dances over\na carpet of birdsong and rustling leaves.\nImagine sunshine on your face." },
     };
 
@@ -200,7 +200,7 @@ public class ShelterWellnessApp extends JFrame {
                         DAILY_RECIPES[todayRecipe][1], ACCENT_ROSE, hov == 2);
 
                 g2.setFont(FONT_SMALL);
-                g2.setColor(new Color(TEXT_MUTED.getRed(), TEXT_MUTED.getGreen(), TEXT_MUTED.getBlue(), 100));
+                g2.setColor(new Color(180, 120, 130));
                 ctr(g2, "\"Take a deep breathe.\"", cx, getHeight() - 36);
 
                 int linkY = getHeight() - 70;
