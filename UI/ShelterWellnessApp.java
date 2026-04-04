@@ -138,6 +138,8 @@ public class ShelterWellnessApp extends JFrame {
                         if (cards[0].contains(e.getPoint())) navigate("freechat");
                         else if (cards[1].contains(e.getPoint())) navigate("musicdetail");
                         else if (cards[2].contains(e.getPoint())) navigate("recipedetail");
+                        else if (cards[3].contains(e.getPoint())) navigate("help");
+                        
                     }
                     public void mouseExited(MouseEvent e) { if (hov != -1) { hov = -1; repaint(); } }
                 });
