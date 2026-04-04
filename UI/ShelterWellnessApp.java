@@ -28,7 +28,7 @@ public class ShelterWellnessApp extends JFrame {
     private JPanel cardPanel;
     private Image animalImage;
 
-    static final Color BG_PRIMARY = new Color(28, 24, 38);
+    static final Color BG_PRIMARY = new Color(255, 204, 138);
     static final Color BG_SECONDARY = new Color(35, 30, 48);
     static final Color TEXT_PRIMARY = new Color(232, 226, 240);
     static final Color TEXT_SECONDARY = new Color(180, 170, 195);
@@ -97,7 +97,7 @@ public class ShelterWellnessApp extends JFrame {
         setMinimumSize(new Dimension(820, 650));
         setLocationRelativeTo(null);
    
-        animalImage = new ImageIcon("public/images/animal/IMG_3495.PNG").getImage();
+        animalImage = new ImageIcon("public/images/animal/IMG_3491.PNG").getImage();
 
         Random rand = new Random();
         todayMusic = rand.nextInt(DAILY_MUSIC.length);
@@ -867,11 +867,11 @@ public class ShelterWellnessApp extends JFrame {
         g.setColor(CARD_BORDER);g.drawRoundRect(x,y,bw,bh,10,10);
         g.setFont(new Font("SansSerif",Font.BOLD,12));g.setColor(TEXT_SECONDARY);g.drawString("\u2190 Back",x+14,y+20);}
     void drawAnimal(Graphics2D g, int cx, int ty, float s, boolean happy) {
-        int imgW = (int)(120 * s);
-        int imgH = (int)(120 * s);
+        int imgW = (int)(260 * s);
+        int imgH = (int)(200 * s);
 
         int x = cx - imgW / 2;
-        int y = ty;
+        int y = ty-40;
 
         g.drawImage(animalImage, x, y, imgW, imgH, this);
     }
@@ -924,7 +924,7 @@ public class ShelterWellnessApp extends JFrame {
         @Override
         protected void paintComponent(Graphics g) {
             Graphics2D g2 = (Graphics2D) g;
-            g2.setPaint(new GradientPaint(0, 0, BG_PRIMARY, 0, getHeight(), new Color(26, 32, 42)));
+            g2.setPaint(new GradientPaint(0, 0, BG_PRIMARY, 0, getHeight(), new Color(226, 132, 112)));
             g2.fillRect(0, 0, getWidth(), getHeight());
         }
     }
