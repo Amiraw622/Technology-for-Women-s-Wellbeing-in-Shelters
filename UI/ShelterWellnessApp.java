@@ -1,9 +1,12 @@
 package UI;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.Random;
 
 /**
@@ -23,6 +26,7 @@ public class ShelterWellnessApp extends JFrame {
 
     private CardLayout cardLayout;
     private JPanel cardPanel;
+    private Image animalImage;
 
     static final Color BG_PRIMARY = new Color(28, 24, 38);
     static final Color BG_SECONDARY = new Color(35, 30, 48);
@@ -92,6 +96,8 @@ public class ShelterWellnessApp extends JFrame {
         setSize(900, 720);
         setMinimumSize(new Dimension(820, 650));
         setLocationRelativeTo(null);
+   
+        animalImage = new ImageIcon("public/images/animal/IMG_3495.PNG").getImage();
 
         Random rand = new Random();
         todayMusic = rand.nextInt(DAILY_MUSIC.length);
@@ -144,7 +150,6 @@ public class ShelterWellnessApp extends JFrame {
                     public void mouseExited(MouseEvent e) { if (hov != -1) { hov = -1; repaint(); } }
                 });
 
-                
             }
             @Override protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -557,26 +562,15 @@ public class ShelterWellnessApp extends JFrame {
         g.setColor(new Color(255,255,255,12));g.fillRoundRect(x,y,bw,bh,10,10);
         g.setColor(CARD_BORDER);g.drawRoundRect(x,y,bw,bh,10,10);
         g.setFont(new Font("SansSerif",Font.BOLD,12));g.setColor(TEXT_SECONDARY);g.drawString("\u2190 Back",x+14,y+20);}
-    static void drawAnimal(Graphics2D g,int cx,int ty,float s,boolean happy){
-        AffineTransform o=g.getTransform();g.translate(cx,ty+40*s);g.scale(s,s);
-        Color body=happy?new Color(168,230,207):new Color(200,181,212);
-        Color inner=happy?new Color(200,240,225):new Color(240,214,232);
-        g.setColor(body);g.fillOval(-30,5,60,40);g.setColor(new Color(124,111,138));g.drawOval(-30,5,60,40);
-        AffineTransform et=g.getTransform();
-        g.rotate(Math.toRadians(-12),-8,-11);g.setColor(body);g.fillOval(-18,-28,20,34);
-        g.setColor(new Color(124,111,138));g.drawOval(-18,-28,20,34);g.setColor(inner);g.fillOval(-14,-22,12,20);
-        g.setTransform(et);g.rotate(Math.toRadians(12),8,-11);g.setColor(body);g.fillOval(-2,-28,20,34);
-        g.setColor(new Color(124,111,138));g.drawOval(-2,-28,20,34);g.setColor(inner);g.fillOval(2,-22,12,20);
-        g.setTransform(et);g.setColor(body);g.fillOval(-24,-18,48,42);
-        g.setColor(new Color(124,111,138));g.drawOval(-24,-18,48,42);
-        g.setColor(new Color(74,63,85));g.fillOval(-12,-4,8,10);g.fillOval(4,-4,8,10);
-        g.setColor(Color.WHITE);g.fillOval(-11,-5,3,3);g.fillOval(5,-5,3,3);
-        g.setColor(new Color(232,160,191));g.fillOval(-3,6,7,5);
-        g.setColor(new Color(124,111,138));g.setStroke(new BasicStroke(1.5f,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
-        if(happy)g.draw(new QuadCurve2D.Float(-7,13,0,20,7,13));
-        else g.draw(new QuadCurve2D.Float(-7,15,0,11,7,15));
-        g.setColor(new Color(240,214,232,80));g.fillOval(-22,2,10,8);g.fillOval(12,2,10,8);
-        g.setTransform(o);}
+    void drawAnimal(Graphics2D g, int cx, int ty, float s, boolean happy) {
+        int imgW = (int)(120 * s);
+        int imgH = (int)(120 * s);
+
+        int x = cx - imgW / 2;
+        int y = ty;
+
+        g.drawImage(animalImage, x, y, imgW, imgH, this);
+    }
 
     JButton styledBtn(String t){JButton b=new JButton(t);b.setFont(new Font("SansSerif",Font.BOLD,12));
         b.setForeground(TEXT_SECONDARY);b.setBackground(new Color(50,45,65));
