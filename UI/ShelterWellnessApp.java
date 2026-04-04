@@ -1,4 +1,5 @@
 package UI;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -96,7 +97,7 @@ public class ShelterWellnessApp extends JFrame {
         setSize(900, 720);
         setMinimumSize(new Dimension(820, 650));
         setLocationRelativeTo(null);
-   
+
         animalImage = new ImageIcon("public/images/animal/IMG_3491.PNG").getImage();
 
         Random rand = new Random();
@@ -114,6 +115,7 @@ public class ShelterWellnessApp extends JFrame {
                 DAILY_RECIPES[todayRecipe][2], "\u2615", ACCENT_ROSE, "TODAY'S RECIPE", "\u2665  Show me another one"),
                 "recipedetail");
         cardPanel.add(createMoodCheckScreen(), "moodcheck");
+        cardPanel.add(createSupportChoiceScreen(), "supportChoice");
         cardPanel.add(createEnjoyScreen(), "enjoy");
         cardPanel.add(createWhatsGoingOnScreen(), "whatsup");
         cardPanel.add(createSupportOptionsScreen(), "support");
@@ -124,6 +126,92 @@ public class ShelterWellnessApp extends JFrame {
 
         add(cardPanel);
         cardLayout.show(cardPanel, "home");
+    }
+
+    private JPanel createSupportChoiceScreen() {
+        return new GradientPanel() {
+
+            final Rectangle calmBtn = new Rectangle();
+            final Rectangle comfortBtn = new Rectangle();
+            final Rectangle distractBtn = new Rectangle();
+            final Rectangle talkBtn = new Rectangle();
+
+            int hov = -1;
+
+            {
+                MouseAdapter ma = new MouseAdapter() {
+
+                    public void mouseMoved(MouseEvent e) {
+                        hov = calmBtn.contains(e.getPoint()) ? 0
+                                : comfortBtn.contains(e.getPoint()) ? 1
+                                        : distractBtn.contains(e.getPoint()) ? 2
+                                                : talkBtn.contains(e.getPoint()) ? 3 : -1;
+                        repaint();
+                    }
+
+                    public void mouseClicked(MouseEvent e) {
+                        if (calmBtn.contains(e.getPoint()))
+                            navigate("musicdetail");
+                        else if (comfortBtn.contains(e.getPoint()))
+                            navigate("recipedetail");
+                        else if (distractBtn.contains(e.getPoint()))
+                            navigate("musicdetail");
+                        else if (talkBtn.contains(e.getPoint()))
+                            navigate("talk");
+                    }
+
+                    public void mouseExited(MouseEvent e) {
+                        hov = -1;
+                        repaint();
+                    }
+                };
+
+                addMouseListener(ma);
+                addMouseMotionListener(ma);
+            }
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = setup(g);
+
+                int w = getWidth();
+                int cx = w / 2;
+
+                g2.setFont(FONT_TITLE);
+                ctr(g2, "What would feel most helpful right now?", cx, 120);
+
+                int btnW = 320, btnH = 50, gap = 16;
+                int y = 200;
+
+                String[] texts = {
+                        "Something calming",
+                        "Something comforting",
+                        "Something to distract me",
+                        "I just want to talk"
+                };
+
+                Rectangle[] btns = { calmBtn, comfortBtn, distractBtn, talkBtn };
+
+                for (int i = 0; i < 4; i++) {
+                    btns[i].setBounds(cx - btnW / 2, y, btnW, btnH);
+
+                    g2.setColor(hov == i ? alphaColor(ACCENT_TEAL, 30) : CARD_BG);
+                    g2.fillRoundRect(cx - btnW / 2, y, btnW, btnH, 16, 16);
+
+                    g2.setColor(alphaColor(ACCENT_TEAL, 70));
+                    g2.drawRoundRect(cx - btnW / 2, y, btnW, btnH, 16, 16);
+
+                    g2.setColor(TEXT_PRIMARY);
+                    g2.setFont(FONT_BUTTON);
+                    ctr(g2, texts[i], cx, y + 32);
+
+                    y += btnH + gap;
+                }
+
+                g2.dispose();
+            }
+        };
     }
 
     // ═══════ HOME — 3 cards ═══════
@@ -159,7 +247,13 @@ public class ShelterWellnessApp extends JFrame {
                             navigate("help");
 
                     }
-                    public void mouseExited(MouseEvent e) { if (hov != -1) { hov = -1; repaint(); } }
+
+                    public void mouseExited(MouseEvent e) {
+                        if (hov != -1) {
+                            hov = -1;
+                            repaint();
+                        }
+                    }
                 });
 
             }
@@ -227,25 +321,43 @@ public class ShelterWellnessApp extends JFrame {
             String icon, Color accent, String label, String actionText) {
         return new GradientPanel() {
             int hov = -1;
-            final Rectangle backBtn = new Rectangle(), moodBtn = new Rectangle(), actBtn = new Rectangle();
+
+            final Rectangle backBtn = new Rectangle();
+            final Rectangle yesBtn = new Rectangle();
+            final Rectangle noBtn = new Rectangle();
+            final Rectangle actBtn = new Rectangle();
+
             {
                 MouseAdapter ma = new MouseAdapter() {
+                    @Override
                     public void mouseMoved(MouseEvent e) {
                         int p = hov;
                         hov = backBtn.contains(e.getPoint()) ? 0
-                                : moodBtn.contains(e.getPoint()) ? 1
-                                        : actBtn.contains(e.getPoint()) ? 2 : -1;
-                        setCursor(
-                                hov >= 0 ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) : Cursor.getDefaultCursor());
-                        if (p != hov)
+                                : yesBtn.contains(e.getPoint()) ? 1
+                                        : noBtn.contains(e.getPoint()) ? 2
+                                                : actBtn.contains(e.getPoint()) ? 3
+                                                        : -1;
+
+                        setCursor(hov >= 0
+                                ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
+                                : Cursor.getDefaultCursor());
+
+                        if (p != hov) {
                             repaint();
+                        }
                     }
 
+                    @Override
                     public void mouseClicked(MouseEvent e) {
                         if (backBtn.contains(e.getPoint())) {
                             navigate("home");
-                        } else if (moodBtn.contains(e.getPoint())) {
-                            navigate("moodcheck");
+
+                        } else if (yesBtn.contains(e.getPoint())) {
+                            System.out.println("This works for the user.");
+
+                        } else if (noBtn.contains(e.getPoint())) {
+                            navigate("supportChoice");
+
                         } else if (actBtn.contains(e.getPoint())) {
                             if (label.equals("TODAY'S RECIPE")) {
                                 todayRecipe = (todayRecipe + 1) % DAILY_RECIPES.length;
@@ -259,6 +371,7 @@ public class ShelterWellnessApp extends JFrame {
                         }
                     }
 
+                    @Override
                     public void mouseExited(MouseEvent e) {
                         if (hov != -1) {
                             hov = -1;
@@ -266,6 +379,7 @@ public class ShelterWellnessApp extends JFrame {
                         }
                     }
                 };
+
                 addMouseListener(ma);
                 addMouseMotionListener(ma);
             }
@@ -274,38 +388,48 @@ public class ShelterWellnessApp extends JFrame {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 Graphics2D g2 = setup(g);
-                int w = getWidth(), cx = w / 2, cW = Math.min(380, w - 40), cX = (w - cW) / 2;
+
+                int w = getWidth();
+                int cx = w / 2;
+                int cW = Math.min(380, w - 40);
+                int cX = (w - cW) / 2;
+
                 drawBack(g2, 20, 20, backBtn);
+
                 g2.setFont(FONT_SMALL);
                 g2.setColor(accent);
                 ctr(g2, label, cx, 72);
+
                 g2.setFont(new Font("SansSerif", Font.PLAIN, 48));
                 g2.setColor(accent);
                 ctr(g2, icon, cx, 120);
+
                 g2.setFont(FONT_DETAIL_TITLE);
                 g2.setColor(TEXT_PRIMARY);
                 ctr(g2, title, cx, 160);
+
                 g2.setFont(FONT_SUBTITLE);
                 g2.setColor(TEXT_SECONDARY);
                 ctr(g2, subtitle, cx, 184);
 
-                int abW = 180, abH = 40, abX = cx - abW / 2, abY = 206;
+                int abW = 280, abH = 44, abX = cx - abW / 2, abY = 215;
                 actBtn.setBounds(abX, abY, abW, abH);
-                g2.setColor(hov == 2 ? alphaColor(accent, 35) : CARD_BG);
+                g2.setColor(hov == 3 ? alphaColor(accent, 35) : CARD_BG);
                 g2.fillRoundRect(abX, abY, abW, abH, 20, 20);
                 g2.setColor(alphaColor(accent, 60));
                 g2.setStroke(new BasicStroke(1));
                 g2.drawRoundRect(abX, abY, abW, abH, 20, 20);
                 g2.setFont(FONT_BUTTON);
                 g2.setColor(accent);
-                ctr(g2, actionText, cx, abY + 26);
+                ctr(g2, actionText, cx, abY + 29);
 
-                int bY = 268, bH = 200;
+                int bY = 285, bH = 210;
                 g2.setColor(CARD_BG);
                 g2.fillRoundRect(cX, bY, cW, bH, 16, 16);
                 g2.setColor(CARD_BORDER);
                 g2.setStroke(new BasicStroke(0.5f));
                 g2.drawRoundRect(cX, bY, cW, bH, 16, 16);
+
                 g2.setFont(FONT_BODY);
                 g2.setColor(TEXT_SECONDARY);
                 int tY = bY + 28;
@@ -313,17 +437,27 @@ public class ShelterWellnessApp extends JFrame {
                     g2.drawString(line, cX + 20, tY);
                     tY += 22;
                 }
+                g2.setFont(new Font("SansSerif", Font.BOLD, 13));
 
-                int mbW = 300, mbH = 52, mbX = cx - mbW / 2, mbY = 500;
-                moodBtn.setBounds(mbX, mbY, mbW, mbH);
-                g2.setColor(hov == 1 ? alphaColor(ACCENT_PURPLE, 28) : CARD_BG);
-                g2.fillRoundRect(mbX, mbY, mbW, mbH, 16, 16);
-                g2.setColor(alphaColor(ACCENT_PURPLE, hov == 1 ? 80 : 40));
-                g2.setStroke(new BasicStroke(1.2f));
-                g2.drawRoundRect(mbX, mbY, mbW, mbH, 16, 16);
-                g2.setFont(FONT_BUTTON);
-                g2.setColor(hov == 1 ? ACCENT_PURPLE : TEXT_SECONDARY);
-                ctr(g2, "Does this feel right today? \u2192", cx, mbY + 32);
+                g2.setColor(hov == 2 ? ACCENT_TEAL : TEXT_SECONDARY);
+                String hint = "Want something different?";
+
+                int smallBtnW = 260;
+                int smallBtnH = 38;
+                int smallBtnX = cx - smallBtnW / 2;
+                int smallBtnY = bY + bH + 20;
+
+                noBtn.setBounds(smallBtnX, smallBtnY, smallBtnW, smallBtnH);
+
+                g2.setColor(hov == 2 ? alphaColor(ACCENT_PURPLE, 28) : CARD_BG);
+                g2.fillRoundRect(smallBtnX, smallBtnY, smallBtnW, smallBtnH, 18, 18);
+
+                g2.setColor(alphaColor(ACCENT_PURPLE, hov == 2 ? 80 : 45));
+                g2.drawRoundRect(smallBtnX, smallBtnY, smallBtnW, smallBtnH, 18, 18);
+
+                g2.setFont(new Font("SansSerif", Font.BOLD, 13));
+                g2.setColor(hov == 2 ? ACCENT_PURPLE : TEXT_SECONDARY);
+                ctr(g2, hint, cx, smallBtnY + 24);
                 g2.dispose();
             }
         };
@@ -845,34 +979,81 @@ public class ShelterWellnessApp extends JFrame {
     }
 
     // ═══════ UTILITIES ═══════
-    void navigate(String s){cardLayout.show(cardPanel,s);}
-    static Graphics2D setup(Graphics g){Graphics2D g2=(Graphics2D)g.create();
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);return g2;}
-    static void ctr(Graphics2D g,String t,int cx,int y){FontMetrics f=g.getFontMetrics();g.drawString(t,cx-f.stringWidth(t)/2,y);}
-    static void gradText(Graphics2D g,String t,int cx,int y,Color a,Color b){FontMetrics f=g.getFontMetrics();
-        int tx=cx-f.stringWidth(t)/2;g.setPaint(new GradientPaint(tx,y-20,a,tx+f.stringWidth(t),y,b));g.drawString(t,tx,y);}
-    static Color alphaColor(Color c,int a){return new Color(c.getRed(),c.getGreen(),c.getBlue(),a);}
-    static void drawCard(Graphics2D g,int x,int y,int w,int h,boolean hov,Color ac){
-        if(hov){g.setColor(alphaColor(ac,10));g.fillRoundRect(x-3,y-3,w+6,h+6,22,22);}
-        g.setColor(hov?alphaColor(ac,15):CARD_BG);g.fillRoundRect(x,y,w,h,18,18);
-        g.setColor(alphaColor(ac,hov?80:25));g.setStroke(new BasicStroke(1));g.drawRoundRect(x,y,w,h,18,18);}
-    static void cardIcon(Graphics2D g,int x,int y,String ic,Color ac){
-        g.setFont(new Font("SansSerif",Font.PLAIN,28));g.setColor(ac);g.drawString(ic,x+22,y+48);}
-    static void cardText(Graphics2D g,int x,int y,String t,String d,String h,Color ac,boolean hov){
-        g.setFont(FONT_CARD_TITLE);g.setColor(hov?ac:TEXT_PRIMARY);g.drawString(t,x+64,y+34);
-        g.setFont(FONT_CARD_DESC);g.setColor(TEXT_SECONDARY);g.drawString(d,x+64,y+54);
-        g.setFont(FONT_SMALL);g.setColor(alphaColor(ac,90));g.drawString(h,x+64,y+74);}
-    static void drawBack(Graphics2D g,int x,int y,Rectangle b){int bw=80,bh=30;b.setBounds(x,y,bw,bh);
-        g.setColor(new Color(255,255,255,12));g.fillRoundRect(x,y,bw,bh,10,10);
-        g.setColor(CARD_BORDER);g.drawRoundRect(x,y,bw,bh,10,10);
-        g.setFont(new Font("SansSerif",Font.BOLD,12));g.setColor(TEXT_SECONDARY);g.drawString("\u2190 Back",x+14,y+20);}
+    void navigate(String s) {
+        cardLayout.show(cardPanel, s);
+    }
+
+    static Graphics2D setup(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+        return g2;
+    }
+
+    static void ctr(Graphics2D g, String t, int cx, int y) {
+        FontMetrics f = g.getFontMetrics();
+        g.drawString(t, cx - f.stringWidth(t) / 2, y);
+    }
+
+    static void gradText(Graphics2D g, String t, int cx, int y, Color a, Color b) {
+        FontMetrics f = g.getFontMetrics();
+        int tx = cx - f.stringWidth(t) / 2;
+        g.setPaint(new GradientPaint(tx, y - 20, a, tx + f.stringWidth(t), y, b));
+        g.drawString(t, tx, y);
+    }
+
+    static Color alphaColor(Color c, int a) {
+        return new Color(c.getRed(), c.getGreen(), c.getBlue(), a);
+    }
+
+    static void drawCard(Graphics2D g, int x, int y, int w, int h, boolean hov, Color ac) {
+        if (hov) {
+            g.setColor(alphaColor(ac, 10));
+            g.fillRoundRect(x - 3, y - 3, w + 6, h + 6, 22, 22);
+        }
+        g.setColor(hov ? alphaColor(ac, 15) : CARD_BG);
+        g.fillRoundRect(x, y, w, h, 18, 18);
+        g.setColor(alphaColor(ac, hov ? 80 : 25));
+        g.setStroke(new BasicStroke(1));
+        g.drawRoundRect(x, y, w, h, 18, 18);
+    }
+
+    static void cardIcon(Graphics2D g, int x, int y, String ic, Color ac) {
+        g.setFont(new Font("SansSerif", Font.PLAIN, 28));
+        g.setColor(ac);
+        g.drawString(ic, x + 22, y + 48);
+    }
+
+    static void cardText(Graphics2D g, int x, int y, String t, String d, String h, Color ac, boolean hov) {
+        g.setFont(FONT_CARD_TITLE);
+        g.setColor(hov ? ac : TEXT_PRIMARY);
+        g.drawString(t, x + 64, y + 34);
+        g.setFont(FONT_CARD_DESC);
+        g.setColor(TEXT_SECONDARY);
+        g.drawString(d, x + 64, y + 54);
+        g.setFont(FONT_SMALL);
+        g.setColor(alphaColor(ac, 90));
+        g.drawString(h, x + 64, y + 74);
+    }
+
+    static void drawBack(Graphics2D g, int x, int y, Rectangle b) {
+        int bw = 80, bh = 30;
+        b.setBounds(x, y, bw, bh);
+        g.setColor(new Color(255, 255, 255, 12));
+        g.fillRoundRect(x, y, bw, bh, 10, 10);
+        g.setColor(CARD_BORDER);
+        g.drawRoundRect(x, y, bw, bh, 10, 10);
+        g.setFont(new Font("SansSerif", Font.BOLD, 12));
+        g.setColor(TEXT_SECONDARY);
+        g.drawString("\u2190 Back", x + 14, y + 20);
+    }
+
     void drawAnimal(Graphics2D g, int cx, int ty, float s, boolean happy) {
-        int imgW = (int)(260 * s);
-        int imgH = (int)(200 * s);
+        int imgW = (int) (260 * s);
+        int imgH = (int) (200 * s);
 
         int x = cx - imgW / 2;
-        int y = ty-40;
+        int y = ty - 40;
 
         g.drawImage(animalImage, x, y, imgW, imgH, this);
     }
