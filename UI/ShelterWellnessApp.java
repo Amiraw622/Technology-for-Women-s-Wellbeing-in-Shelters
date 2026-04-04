@@ -89,8 +89,8 @@ public class ShelterWellnessApp extends JFrame {
     public ShelterWellnessApp() {
         super("Your personal assistant");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(480, 780);
-        setMinimumSize(new Dimension(400, 700));
+        setSize(900, 720);
+        setMinimumSize(new Dimension(820, 650));
         setLocationRelativeTo(null);
 
         Random rand = new Random();
@@ -148,7 +148,7 @@ public class ShelterWellnessApp extends JFrame {
                 int w = getWidth(), cx = w / 2;
                 drawAnimal(g2, cx, 50, 0.95f, true);
                 g2.setFont(FONT_TITLE);
-                gradText(g2, "Good day!", cx, 158, ACCENT_TEAL, new Color(160, 220, 200));
+                gradText(g2, "Here's something gentle for you today💛", cx, 158, ACCENT_TEAL, new Color(160, 220, 200));
                 g2.setFont(FONT_SUBTITLE); g2.setColor(TEXT_MUTED);
                 ctr(g2, "Your personal assistant", cx, 180);
 
