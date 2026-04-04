@@ -87,7 +87,7 @@ public class ShelterWellnessApp extends JFrame {
     private int todayMusic, todayRecipe;
 
     public ShelterWellnessApp() {
-        super("Your personal assistant");
+        super("A small space for you");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(900, 720);
         setMinimumSize(new Dimension(820, 650));
@@ -150,7 +150,7 @@ public class ShelterWellnessApp extends JFrame {
                 g2.setFont(FONT_TITLE);
                 gradText(g2, "Here's something gentle for you today💛", cx, 158, ACCENT_TEAL, new Color(160, 220, 200));
                 g2.setFont(FONT_SUBTITLE); g2.setColor(TEXT_MUTED);
-                ctr(g2, "Your personal assistant", cx, 180);
+                ctr(g2, "I'm here with you", cx, 180);
 
                 int cW = Math.min(360, w - 48), cX = (w - cW) / 2, cH = 88, gap = 14, y = 206;
 
