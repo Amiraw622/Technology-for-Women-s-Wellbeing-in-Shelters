@@ -171,10 +171,11 @@ public class ShelterWellnessApp extends JFrame {
                 int w = getWidth(), cx = w / 2;
                 drawAnimal(g2, cx, 50, 0.95f, true);
                 g2.setFont(FONT_TITLE);
-                gradText(g2, "Here's something gentle for you today💛", cx, 158, ACCENT_TEAL, new Color(160, 220, 200));
+                g2.setColor(new Color(80, 50, 20));
+                ctr(g2, "Here's something gentle for you today💛", cx, 208);
                 g2.setFont(FONT_SUBTITLE);
                 g2.setColor(TEXT_MUTED);
-                ctr(g2, "I'm here with you", cx, 180);
+                ctr(g2, "I'm here with you", cx, 230);
 
                 int cW = Math.min(360, w - 48), cX = (w - cW) / 2, cH = 88, gap = 14, y = 206;
 
@@ -200,7 +201,7 @@ public class ShelterWellnessApp extends JFrame {
 
                 g2.setFont(FONT_SMALL);
                 g2.setColor(new Color(TEXT_MUTED.getRed(), TEXT_MUTED.getGreen(), TEXT_MUTED.getBlue(), 100));
-                ctr(g2, "\"Take things one moment at a time.\"", cx, getHeight() - 36);
+                ctr(g2, "\"Take a deep breathe.\"", cx, getHeight() - 36);
 
                 int linkY = getHeight() - 70;
                 String helpText = "Help & Support";
