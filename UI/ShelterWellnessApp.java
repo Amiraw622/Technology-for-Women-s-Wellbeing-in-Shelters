@@ -1018,7 +1018,7 @@ public class ShelterWellnessApp extends JFrame {
         g.drawRoundRect(x, y, w, h, 18, 18);
     }
 
-    static void cardIcon(Graphics2D g, int x, int y, String ic, Color ac) {
+    static void cardIcon(Graphics2D g, int x, int y, String ic, Color ac, boolean hov) {
         g.setFont(new Font("SansSerif", Font.PLAIN, 28));
         g.setColor(ac);
         g.drawString(ic, x + 22, y + 48);
