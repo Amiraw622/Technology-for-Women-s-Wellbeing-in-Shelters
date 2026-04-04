@@ -28,13 +28,13 @@ public class ShelterWellnessApp extends JFrame {
     private JPanel cardPanel;
     private Image animalImage;
 
-    static final Color BG_PRIMARY = new Color(255, 204, 138);
+    static final Color BG_PRIMARY = new Color(255, 255, 255);
     static final Color BG_SECONDARY = new Color(35, 30, 48);
-    static final Color TEXT_PRIMARY = new Color(232, 226, 240);
+    static final Color TEXT_PRIMARY = new Color(140, 66, 45);
     static final Color TEXT_SECONDARY = new Color(180, 170, 195);
     static final Color TEXT_MUTED = new Color(140, 132, 160);
-    static final Color ACCENT_TEAL = new Color(93, 202, 165);
-    static final Color ACCENT_WARM = new Color(239, 159, 39);
+    static final Color ACCENT_TEAL = new Color(103, 20, 65);
+    static final Color ACCENT_WARM = new Color(39, 0, 100);
     static final Color ACCENT_ROSE = new Color(220, 120, 140);
     static final Color ACCENT_PINK = new Color(212, 83, 126);
     static final Color ACCENT_PURPLE = new Color(176, 124, 216);
@@ -171,7 +171,7 @@ public class ShelterWellnessApp extends JFrame {
                 int w = getWidth(), cx = w / 2;
                 drawAnimal(g2, cx, 50, 0.95f, true);
                 g2.setFont(FONT_TITLE);
-                g2.setColor(new Color(80, 50, 20));
+                g2.setColor(new Color(140, 76, 45));
                 ctr(g2, "Here's something gentle for you today💛", cx, 218);
                 g2.setFont(FONT_SUBTITLE);
                 g2.setColor(TEXT_MUTED);
@@ -862,7 +862,7 @@ public class ShelterWellnessApp extends JFrame {
         g.setColor(alphaColor(ac,hov?80:25));g.setStroke(new BasicStroke(1));g.drawRoundRect(x,y,w,h,18,18);}
 
     static void cardIcon(Graphics2D g,int x,int y,String ic,Color nc, boolean hov){
-        g.setFont(new Font("SansSerif",Font.PLAIN,28));g.setColor(hov ? new Color(120, 100, 50) : nc);g.drawString(ic,x+22,y+48);}
+        g.setFont(new Font("SansSerif",Font.PLAIN,28));g.setColor(hov ? new Color(255, 255, 255) : nc);g.drawString(ic,x+22,y+48);}
 
     static void cardText(Graphics2D g,int x,int y,String t,String d,String h,Color ac,boolean hov){
         g.setFont(FONT_CARD_TITLE);g.setColor(hov?ac:TEXT_PRIMARY);g.drawString(t,x+64,y+34);
