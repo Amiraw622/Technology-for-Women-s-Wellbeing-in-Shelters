@@ -276,21 +276,21 @@ public class ShelterWellnessApp extends JFrame {
                 drawCard(g2, cX, y, cW, cH, hov == 0, ACCENT_TEAL);
                 cards[0].setBounds(cX, y, cW, cH);
                 cardIcon(g2, cX, y, "\u2661", ACCENT_TEAL, hov == 0);
-                cardText(g2, cX, y, "Talk to Me", "Share your thoughts with me",
+                cardText(g2, cX, y, "Talk to me", "What's your mood?",
                         "I'm always here for you", ACCENT_TEAL, hov == 0);
 
                 y += cH + gap;
                 drawCard(g2, cX, y, cW, cH, hov == 1, ACCENT_WARM);
                 cards[1].setBounds(cX, y, cW, cH);
                 cardIcon(g2, cX, y, "\u266B", ACCENT_WARM, hov == 1);
-                cardText(g2, cX, y, "Today's Music", DAILY_MUSIC[todayMusic][0],
+                cardText(g2, cX, y, "Listen", DAILY_MUSIC[todayMusic][0],
                         DAILY_MUSIC[todayMusic][1], ACCENT_WARM, hov == 1);
 
                 y += cH + gap;
                 drawCard(g2, cX, y, cW, cH, hov == 2, ACCENT_ROSE);
                 cards[2].setBounds(cX, y, cW, cH);
                 cardIcon(g2, cX, y, "\u2615", ACCENT_ROSE, hov == 2);
-                cardText(g2, cX, y, "Today's Recipe", DAILY_RECIPES[todayRecipe][0],
+                cardText(g2, cX, y, "Cook", DAILY_RECIPES[todayRecipe][0],
                         DAILY_RECIPES[todayRecipe][1], ACCENT_ROSE, hov == 2);
 
                 g2.setFont(FONT_SMALL);
