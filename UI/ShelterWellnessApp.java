@@ -266,7 +266,7 @@ public class ShelterWellnessApp extends JFrame {
                 drawAnimal(g2, cx, 50, 0.95f, true);
                 g2.setFont(FONT_TITLE);
                 g2.setColor(new Color(140, 76, 45));
-                ctr(g2, "Here's something gentle for you today💛", cx, 218);
+                ctr(g2, "Here's something gentle for you today 💛", cx, 218);
                 g2.setFont(FONT_SUBTITLE);
                 g2.setColor(TEXT_MUTED);
                 ctr(g2, "I'm here with you", cx, 246);
