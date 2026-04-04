@@ -123,12 +123,12 @@ public class ShelterWellnessApp extends JFrame {
     private JPanel createHomeScreen() {
         return new GradientPanel() {
             int hov = -1;
-            final Rectangle[] cards = { new Rectangle(), new Rectangle(), new Rectangle() };
+            final Rectangle[] cards = { new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle() };
             {
                 addMouseMotionListener(new MouseMotionAdapter() {
                     public void mouseMoved(MouseEvent e) {
                         int prev = hov; hov = -1;
-                        for (int i = 0; i < 3; i++) if (cards[i].contains(e.getPoint())) { hov = i; break; }
+                        for (int i = 0; i < 4; i++) if (cards[i].contains(e.getPoint())) { hov = i; break; }
                         setCursor(hov >= 0 ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) : Cursor.getDefaultCursor());
                         if (prev != hov) repaint();
                     }
@@ -143,6 +143,8 @@ public class ShelterWellnessApp extends JFrame {
                     }
                     public void mouseExited(MouseEvent e) { if (hov != -1) { hov = -1; repaint(); } }
                 });
+
+                
             }
             @Override protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -179,7 +181,23 @@ public class ShelterWellnessApp extends JFrame {
                 g2.setFont(FONT_SMALL);
                 g2.setColor(new Color(TEXT_MUTED.getRed(), TEXT_MUTED.getGreen(), TEXT_MUTED.getBlue(), 100));
                 ctr(g2, "\"Take things one moment at a time.\"", cx, getHeight() - 36);
+
+                int linkY = getHeight() - 70;
+                String helpText = "Help & Support";
+                g2.setFont(FONT_BODY);
+                g2.setColor(ACCENT_PINK);
+
+                FontMetrics fm = g2.getFontMetrics();
+                int textW = fm.stringWidth(helpText);
+                int linkX = cx - textW / 2;
+
+                g2.drawString(helpText, linkX, linkY);
+                g2.drawLine(linkX, linkY + 2, linkX + textW, linkY + 2);
+
+                cards[3].setBounds(linkX, linkY - 18, textW, 24);
                 g2.dispose();
+
+                
             }
         };
     }
