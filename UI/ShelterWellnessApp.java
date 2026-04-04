@@ -121,7 +121,7 @@ public class ShelterWellnessApp extends JFrame {
         cardPanel.add(createSupportOptionsScreen(), "support");
         cardPanel.add(createHelpResourcesScreen(), "help");
         cardPanel.add(createMusicExerciseScreen(), "music");
-        cardPanel.add(buildChatScreen("Talk", ACCENT_CORAL, true, "support"), "talk");
+        cardPanel.add(buildChatScreen("Talk", ACCENT_CORAL, true, "home"), "talk");
         cardPanel.add(buildChatScreen("Chat", ACCENT_TEAL, false, "home"), "freechat");
 
         add(cardPanel);
@@ -602,7 +602,7 @@ public class ShelterWellnessApp extends JFrame {
                         if (back.contains(e.getPoint()))
                             navigate("moodcheck");
                         else if (cont.contains(e.getPoint()))
-                            navigate("support");
+                            navigate("home");
                     }
                 };
                 addMouseListener(ma);
@@ -740,7 +740,7 @@ public class ShelterWellnessApp extends JFrame {
         JPanel p = new JPanel(new BorderLayout());
         p.setBackground(BG_PRIMARY);
         JButton bk = styledBtn("\u2190 Back");
-        bk.addActionListener(e -> navigate("support"));
+        bk.addActionListener(e -> navigate("home"));
         JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
         top.setBackground(BG_SECONDARY);
         top.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
@@ -798,7 +798,7 @@ public class ShelterWellnessApp extends JFrame {
         JPanel p = new JPanel(new BorderLayout());
         p.setBackground(BG_PRIMARY);
         JButton bk = styledBtn("\u2190 Back");
-        bk.addActionListener(e -> navigate("support"));
+        bk.addActionListener(e -> navigate("home"));
         JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
         top.setBackground(BG_SECONDARY);
         top.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
