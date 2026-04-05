@@ -1,12 +1,8 @@
 package UI;
 
 import javax.swing.*;
-import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.*;
-import java.io.File;
-import java.io.IOException;
 import java.util.Random;
 
 /**
@@ -28,30 +24,30 @@ public class ShelterWellnessApp extends JFrame {
     private JPanel cardPanel;
     private Image[] animals;
 
-    static final Color BG_PRIMARY = new Color(255, 255, 255);
-    static final Color BG_SECONDARY = new Color(35, 30, 48);
-    static final Color TEXT_PRIMARY = new Color(140, 66, 45);
-    static final Color TEXT_SECONDARY = new Color(170, 120, 135);
-    static final Color TEXT_MUTED = new Color(180, 122, 130);
-    static final Color ACCENT_TEAL = new Color(103, 20, 65);
-    static final Color ACCENT_WARM = new Color(39, 0, 100);
-    static final Color ACCENT_ROSE = new Color(220, 20, 40);
-    static final Color ACCENT_PINK = new Color(232, 63, 86);
-    static final Color ACCENT_PURPLE = new Color(140, 80, 180);
-    static final Color ACCENT_CORAL = new Color(216, 90, 48);
-    static final Color CARD_BG = new Color(255, 255, 255, 10);
-    static final Color CARD_HOVER = new Color(255, 255, 255, 20);
-    static final Color CARD_BORDER = new Color(255, 255, 255, 20);
+    public static final Color BG_PRIMARY = new Color(255, 255, 255);
+    public static final Color BG_SECONDARY = new Color(35, 30, 48);
+    public static final Color TEXT_PRIMARY = new Color(140, 66, 45);
+    public static final Color TEXT_SECONDARY = new Color(170, 120, 135);
+    public static final Color TEXT_MUTED = new Color(180, 122, 130);
+    public static final Color ACCENT_TEAL = new Color(103, 20, 65);
+    public static final Color ACCENT_WARM = new Color(39, 0, 100);
+    public static final Color ACCENT_ROSE = new Color(220, 20, 40);
+    public static final Color ACCENT_PINK = new Color(232, 63, 86);
+    public static final Color ACCENT_PURPLE = new Color(140, 80, 180);
+    public static final Color ACCENT_CORAL = new Color(216, 90, 48);
+    public static final Color CARD_BG = new Color(255, 255, 255, 10);
+    public static final Color CARD_HOVER = new Color(255, 255, 255, 20);
+    public static final Color CARD_BORDER = new Color(255, 255, 255, 20);
 
-    static final Font FONT_TITLE = new Font("SansSerif", Font.BOLD, 26);
-    static final Font FONT_SUBTITLE = new Font("SansSerif", Font.PLAIN, 14);
-    static final Font FONT_CARD_TITLE = new Font("SansSerif", Font.BOLD, 17);
-    static final Font FONT_CARD_DESC = new Font("SansSerif", Font.PLAIN, 13);
-    static final Font FONT_BODY = new Font("SansSerif", Font.PLAIN, 14);
-    static final Font FONT_SMALL = new Font("SansSerif", Font.PLAIN, 12);
-    static final Font FONT_BUTTON = new Font("SansSerif", Font.BOLD, 14);
-    static final Font FONT_CHAT = new Font("SansSerif", Font.PLAIN, 14);
-    static final Font FONT_DETAIL_TITLE = new Font("SansSerif", Font.BOLD, 22);
+    public static final Font FONT_TITLE = new Font("SansSerif", Font.BOLD, 26);
+    public static final Font FONT_SUBTITLE = new Font("SansSerif", Font.PLAIN, 14);
+    public static final Font FONT_CARD_TITLE = new Font("SansSerif", Font.BOLD, 17);
+    public static final Font FONT_CARD_DESC = new Font("SansSerif", Font.PLAIN, 13);
+    public static final Font FONT_BODY = new Font("SansSerif", Font.PLAIN, 14);
+    public static final Font FONT_SMALL = new Font("SansSerif", Font.PLAIN, 12);
+    public static final Font FONT_BUTTON = new Font("SansSerif", Font.BOLD, 14);
+    public static final Font FONT_CHAT = new Font("SansSerif", Font.PLAIN, 14);
+    public static final Font FONT_DETAIL_TITLE = new Font("SansSerif", Font.BOLD, 22);
 
     static final String[][] DAILY_MUSIC = {
             { "Morning Calm", "Relaxing music to help you find peace",
@@ -109,12 +105,28 @@ public class ShelterWellnessApp extends JFrame {
         cardPanel = new JPanel(cardLayout);
         cardPanel.setBackground(BG_PRIMARY);
 
-        cardPanel.add(createHomeScreen(), "home");
-        cardPanel.add(createDetailScreen(DAILY_MUSIC[todayMusic][0], DAILY_MUSIC[todayMusic][1],
-                DAILY_MUSIC[todayMusic][2], "\u266B", ACCENT_WARM, "TODAY'S MUSIC", "\u25B6  Play now"), "musicdetail");
-        cardPanel.add(createDetailScreen(DAILY_RECIPES[todayRecipe][0], DAILY_RECIPES[todayRecipe][1],
-                DAILY_RECIPES[todayRecipe][2], "\u2615", ACCENT_ROSE, "TODAY'S RECIPE", "\u2665  Show me another one"),
-                "recipedetail");
+        cardPanel.add(new HomePanel(this), "home");
+        cardPanel.add(new DetailPanel(
+            this,
+            DAILY_MUSIC[todayMusic][0],
+            DAILY_MUSIC[todayMusic][1],
+            DAILY_MUSIC[todayMusic][2],
+            "\u266B",
+            ACCENT_WARM,
+            "TODAY'S MUSIC",
+            "\u25B6  Play now"
+        ), "musicdetail");
+
+        cardPanel.add(new DetailPanel(
+                this,
+                DAILY_RECIPES[todayRecipe][0],
+                DAILY_RECIPES[todayRecipe][1],
+                DAILY_RECIPES[todayRecipe][2],
+                "\u2615",
+                ACCENT_ROSE,
+                "TODAY'S RECIPE",
+                "\u2665  Show me another one"
+        ), "recipedetail");
         cardPanel.add(createSupportChoiceScreen(), "supportChoice");
         cardPanel.add(createHelpResourcesScreen(), "help");
         cardPanel.add(buildChatScreen("Talk", ACCENT_CORAL, true, "home"), "talk");
@@ -284,111 +296,7 @@ public class ShelterWellnessApp extends JFrame {
         };
     }
 
-    // ═══════ HOME — 4 cards + help link ═══════
-    // Replace your entire createHomeScreen() method with this:
-    private JPanel createHomeScreen() {
-        return new GradientPanel() {
-            int hov = -1;
-            final Rectangle[] cards = { new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle() };
-            final Rectangle helpLink = new Rectangle(); // separate from cards!
-            {
-                addMouseMotionListener(new MouseMotionAdapter() {
-                    public void mouseMoved(MouseEvent e) {
-                        int prev = hov;
-                        hov = -1;
-                        for (int i = 0; i < 4; i++)
-                            if (cards[i].contains(e.getPoint())) {
-                                hov = i;
-                                break;
-                            }
-                        if (helpLink.contains(e.getPoint()))
-                            hov = 99;
-                        setCursor(
-                                hov >= 0 ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) : Cursor.getDefaultCursor());
-                        if (prev != hov)
-                            repaint();
-                    }
-                });
-                addMouseListener(new MouseAdapter() {
-                    public void mouseClicked(MouseEvent e) {
-                        if (cards[0].contains(e.getPoint()))
-                            navigate("freechat");
-                        else if (cards[1].contains(e.getPoint()))
-                            navigate("musicdetail");
-                        else if (cards[2].contains(e.getPoint()))
-                            navigate("recipedetail");
-                        else if (cards[3].contains(e.getPoint()))
-                            navigate("supportChoice");
-                        else if (helpLink.contains(e.getPoint()))
-                            navigate("help");
-                    }
-
-                    public void mouseExited(MouseEvent e) {
-                        if (hov != -1) {
-                            hov = -1;
-                            repaint();
-                        }
-                    }
-                });
-            }
-
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2 = setup(g);
-                int w = getWidth(), cx = w / 2;
-                drawAnimal(g2, cx, 50, 0.95f, true);
-                g2.setFont(FONT_TITLE);
-                g2.setColor(new Color(140, 76, 45));
-                ctr(g2, "Here's something gentle for you today \uD83D\uDC9B", cx, 218);
-                g2.setFont(FONT_SUBTITLE);
-                g2.setColor(TEXT_MUTED);
-
-                int cW = Math.min(340, w - 48), cX = (w - cW) / 2, cH = 70, gap = 18, y = 240;
-
-                drawCard(g2, cX, y, cW, cH, hov == 0, ACCENT_TEAL);
-                cards[0].setBounds(cX, y, cW, cH);
-                cardIcon(g2, cX, y, "\u2661", ACCENT_TEAL, hov == 0);
-                cardText(g2, cX, y, "Talk to me",
-                        "I'm always here for you", ACCENT_TEAL, hov == 0);
-
-                y += cH + gap;
-                drawCard(g2, cX, y, cW, cH, hov == 1, ACCENT_WARM);
-                cards[1].setBounds(cX, y, cW, cH);
-                cardIcon(g2, cX, y, "\u266B", ACCENT_WARM, hov == 1);
-                cardText(g2, cX, y, "Listen", "Wanna listen to some music?",
-                        ACCENT_WARM, hov == 1);
-
-                y += cH + gap;
-                drawCard(g2, cX, y, cW, cH, hov == 2, ACCENT_ROSE);
-                cards[2].setBounds(cX, y, cW, cH);
-                cardIcon(g2, cX, y, "\u2615", ACCENT_ROSE, hov == 2);
-                cardText(g2, cX, y, "Cook", "Find something to cook?", ACCENT_ROSE, hov == 2);
-
-                y += cH + gap;
-                drawCard(g2, cX, y, cW, cH, hov == 3, ACCENT_PURPLE);
-                cards[3].setBounds(cX, y, cW, cH);
-                cardIcon(g2, cX, y, "\u2728", ACCENT_PURPLE, hov == 3);
-                cardText(g2, cX, y, "Do something", "Find what feels right", ACCENT_PURPLE, hov == 3);
-
-                // Help & Support link — uses helpLink, NOT cards[3]
-                int linkY = getHeight() - 50;
-                String helpText = "Help & Support";
-                g2.setFont(FONT_BODY);
-                g2.setColor(hov == 99 ? new Color(250, 50, 70) : ACCENT_PINK);
-
-                FontMetrics fm = g2.getFontMetrics();
-                int textW = fm.stringWidth(helpText);
-                int linkX = cx - textW / 2;
-
-                g2.drawString(helpText, linkX, linkY);
-                g2.drawLine(linkX, linkY + 2, linkX + textW, linkY + 2);
-
-                helpLink.setBounds(linkX, linkY - 16, textW, 24);
-                g2.dispose();
-            }
-        };
-    }
+    
 
     // ═══════ HELP RESOURCES (redesigned with international numbers) ═══════
     // Replace your entire createHelpResourcesScreen() method with this:
@@ -669,152 +577,7 @@ public class ShelterWellnessApp extends JFrame {
         return card;
     }
 
-    // ═══════ DETAIL (music or recipe) ═══════
-    private JPanel createDetailScreen(String title, String subtitle, String body,
-            String icon, Color accent, String label, String actionText) {
-        return new GradientPanel() {
-            int hov = -1;
-
-            final Rectangle backBtn = new Rectangle();
-            final Rectangle yesBtn = new Rectangle();
-            final Rectangle noBtn = new Rectangle();
-            final Rectangle actBtn = new Rectangle();
-
-            {
-                MouseAdapter ma = new MouseAdapter() {
-                    @Override
-                    public void mouseMoved(MouseEvent e) {
-                        int p = hov;
-                        hov = backBtn.contains(e.getPoint()) ? 0
-                                : yesBtn.contains(e.getPoint()) ? 1
-                                        : noBtn.contains(e.getPoint()) ? 2
-                                                : actBtn.contains(e.getPoint()) ? 3
-                                                        : -1;
-
-                        setCursor(hov >= 0
-                                ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
-                                : Cursor.getDefaultCursor());
-
-                        if (p != hov) {
-                            repaint();
-                        }
-                    }
-
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        if (backBtn.contains(e.getPoint())) {
-                            navigate("home");
-
-                        } else if (yesBtn.contains(e.getPoint())) {
-                            System.out.println("This works for the user.");
-
-                        } else if (noBtn.contains(e.getPoint())) {
-                            navigate("supportChoice");
-
-                        } else if (actBtn.contains(e.getPoint())) {
-                            if (label.equals("TODAY'S RECIPE")) {
-                                todayRecipe = (todayRecipe + 1) % DAILY_RECIPES.length;
-                                refreshRecipeDetail();
-                                navigate("recipedetail");
-                            } else if (label.equals("TODAY'S MUSIC")) {
-                                todayMusic = (todayMusic + 1) % DAILY_MUSIC.length;
-                                refreshMusicDetail();
-                                navigate("musicdetail");
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void mouseExited(MouseEvent e) {
-                        if (hov != -1) {
-                            hov = -1;
-                            repaint();
-                        }
-                    }
-                };
-
-                addMouseListener(ma);
-                addMouseMotionListener(ma);
-            }
-
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2 = setup(g);
-
-                int w = getWidth();
-                int cx = w / 2;
-                int cW = Math.min(380, w - 40);
-                int cX = (w - cW) / 2;
-
-                drawBack(g2, 20, 20, backBtn);
-
-                g2.setFont(FONT_SMALL);
-                g2.setColor(accent);
-                ctr(g2, label, cx, 72);
-
-                g2.setFont(new Font("SansSerif", Font.PLAIN, 48));
-                g2.setColor(accent);
-                ctr(g2, icon, cx, 120);
-
-                g2.setFont(FONT_DETAIL_TITLE);
-                g2.setColor(TEXT_PRIMARY);
-                ctr(g2, title, cx, 160);
-
-                g2.setFont(FONT_SUBTITLE);
-                g2.setColor(TEXT_SECONDARY);
-                ctr(g2, subtitle, cx, 184);
-
-                int abW = 280, abH = 44, abX = cx - abW / 2, abY = 215;
-                actBtn.setBounds(abX, abY, abW, abH);
-                g2.setColor(hov == 3 ? alphaColor(accent, 35) : CARD_BG);
-                g2.fillRoundRect(abX, abY, abW, abH, 20, 20);
-                g2.setColor(alphaColor(accent, 60));
-                g2.setStroke(new BasicStroke(1));
-                g2.drawRoundRect(abX, abY, abW, abH, 20, 20);
-                g2.setFont(FONT_BUTTON);
-                g2.setColor(accent);
-                ctr(g2, actionText, cx, abY + 29);
-
-                int bY = 285, bH = 210;
-                g2.setColor(CARD_BG);
-                g2.fillRoundRect(cX, bY, cW, bH, 16, 16);
-                g2.setColor(CARD_BORDER);
-                g2.setStroke(new BasicStroke(0.5f));
-                g2.drawRoundRect(cX, bY, cW, bH, 16, 16);
-
-                g2.setFont(FONT_BODY);
-                g2.setColor(TEXT_SECONDARY);
-                int tY = bY + 28;
-                for (String line : body.split("\n")) {
-                    g2.drawString(line, cX + 20, tY);
-                    tY += 22;
-                }
-                g2.setFont(new Font("SansSerif", Font.BOLD, 13));
-
-                g2.setColor(hov == 2 ? ACCENT_TEAL : TEXT_SECONDARY);
-                String hint = "Want something different?";
-
-                int smallBtnW = 260;
-                int smallBtnH = 38;
-                int smallBtnX = cx - smallBtnW / 2;
-                int smallBtnY = bY + bH + 20;
-
-                noBtn.setBounds(smallBtnX, smallBtnY, smallBtnW, smallBtnH);
-
-                g2.setColor(hov == 2 ? alphaColor(ACCENT_PURPLE, 28) : CARD_BG);
-                g2.fillRoundRect(smallBtnX, smallBtnY, smallBtnW, smallBtnH, 18, 18);
-
-                g2.setColor(alphaColor(ACCENT_PURPLE, hov == 2 ? 80 : 45));
-                g2.drawRoundRect(smallBtnX, smallBtnY, smallBtnW, smallBtnH, 18, 18);
-
-                g2.setFont(new Font("SansSerif", Font.BOLD, 13));
-                g2.setColor(hov == 2 ? ACCENT_PURPLE : TEXT_SECONDARY);
-                ctr(g2, hint, cx, smallBtnY + 24);
-                g2.dispose();
-            }
-        };
-    }
+    
 
     private JPanel createActionScreen(String title, String subtitle, String body, Color accent, String backTo) {
         return new GradientPanel() {
@@ -1432,7 +1195,7 @@ public class ShelterWellnessApp extends JFrame {
 
     void refreshRecipeDetail() {
         cardPanel.remove(2);
-        cardPanel.add(createDetailScreen(
+        cardPanel.add(new DetailPanel(this,
                 DAILY_RECIPES[todayRecipe][0],
                 DAILY_RECIPES[todayRecipe][1],
                 DAILY_RECIPES[todayRecipe][2],
@@ -1446,7 +1209,7 @@ public class ShelterWellnessApp extends JFrame {
 
     void refreshMusicDetail() {
         cardPanel.remove(1);
-        cardPanel.add(createDetailScreen(
+        cardPanel.add(new DetailPanel(this, 
                 DAILY_MUSIC[todayMusic][0],
                 DAILY_MUSIC[todayMusic][1],
                 DAILY_MUSIC[todayMusic][2],
@@ -1461,7 +1224,7 @@ public class ShelterWellnessApp extends JFrame {
     String reply(String m, boolean s) {
         String l = m.toLowerCase();
 
-        // 无论哪种模式，都先检测负面情绪
+        // bad feelings first
         if (l.contains("sad") || l.contains("cry") || l.contains("hurt"))
             return "I hear you. It's okay to feel this way. I'm right here with you.";
         if (l.contains("scared") || l.contains("afraid"))
@@ -1477,13 +1240,13 @@ public class ShelterWellnessApp extends JFrame {
         if (l.contains("thank"))
             return "You don't need to thank me. You deserve kindness.";
 
-        // 正面/中性回复
+        // positive
         if (l.contains("hello") || l.contains("hi") || l.contains("hey"))
             return "Hello! I'm glad you're here. How are you feeling today?";
         if (l.contains("good") || l.contains("happy") || l.contains("great"))
             return "That's wonderful to hear! What made your day bright?";
 
-        // 默认回复
+        // default
         if (s) {
             String[] r = { "I'm listening. Take your time.", "You are stronger than you realize.",
                     "It's okay to not be okay. I'm here.", "Be gentle with yourself.", "You matter." };
@@ -1579,6 +1342,16 @@ public class ShelterWellnessApp extends JFrame {
             g2.setPaint(new GradientPaint(0, 0, BG_PRIMARY, 0, getHeight(), new Color(226, 132, 112)));
             g2.fillRect(0, 0, getWidth(), getHeight());
         }
+    }
+
+    public void nextRecipe() {
+        todayRecipe = (todayRecipe + 1) % DAILY_RECIPES.length;
+        refreshRecipeDetail();
+    }
+
+    public void nextMusic() {
+        todayMusic = (todayMusic + 1) % DAILY_MUSIC.length;
+        refreshMusicDetail();
     }
 
     public static void main(String[] args) {
