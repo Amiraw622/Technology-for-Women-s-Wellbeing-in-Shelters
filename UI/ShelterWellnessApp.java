@@ -509,12 +509,12 @@ public class ShelterWellnessApp extends JFrame {
         content.add(orgTitle);
 
         String[][] orgs = {
-                { "National DV Hotline (US)", "1-800-799-7233", "24/7 confidential support" },
-                { "Crisis Text Line", "Text HOME to 741741", "Free crisis counseling" },
-                { "RAINN (US)", "1-800-656-4673", "Sexual assault support" },
-                { "Suicide & Crisis Lifeline", "988", "Call or text — 24/7" },
-                { "Women's Law", "womenslaw.org", "Legal info for survivors" },
-                { "NAMI Helpline", "1-800-950-6264", "Mental health support" },
+                { "Assaulted Women's Helpline", "https://www.awhl.org/", "24/7 crisis counselling and emotional support" },
+                { "Crisis Centre BC", "https://www.crisiscentre.bc.ca/", "Barrier-free, non-judgemental support" },
+                { "RAINN (US)", "800.656.HOPE", "National Sexual Assault Hotline" },
+                { "Rise", "https://www.womenslegalcentre.ca/", "Women's legal centre" },
+                { "ASHIYANAA (South Asia)", "1-888-417-2742", "Culturally-competent support services (violence)" },
+                { "WAVE (EUROPE)", "https://wave-network.org/list-of-helplines-in-46-countries/", "A table of the national women's helplines in the 46 European Countries" },
         };
 
         for (String[] org : orgs) {
@@ -1113,7 +1113,7 @@ public class ShelterWellnessApp extends JFrame {
 
     // ═══════ Utility: show option buttons ═══════
     private void showOptions(JPanel chatArea, JPanel bottomPanel, JScrollPane cs,
-                              String[] options, java.util.function.Consumer<String> onChoice) {
+                                String[] options, java.util.function.Consumer<String> onChoice) {
         bottomPanel.removeAll();
 
         for (String opt : options) {
