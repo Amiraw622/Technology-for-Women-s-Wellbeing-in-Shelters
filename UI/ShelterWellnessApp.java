@@ -27,6 +27,7 @@ public class ShelterWellnessApp extends JFrame {
     private CardLayout cardLayout;
     private JPanel cardPanel;
     private Image animalImage;
+    private Image ImageTalk;
 
     static final Color BG_PRIMARY = new Color(255, 255, 255);
     static final Color BG_SECONDARY = new Color(35, 30, 48);
@@ -89,6 +90,7 @@ public class ShelterWellnessApp extends JFrame {
         setLocationRelativeTo(null);
 
         animalImage = new ImageIcon("public/images/animal/IMG_3491.PNG").getImage();
+        ImageTalk = new ImageIcon("public/images/animal/IMG_3497.PNG").getImage();
 
         Random rand = new Random();
         todayMusic = rand.nextInt(DAILY_MUSIC.length);
@@ -735,20 +737,39 @@ public class ShelterWellnessApp extends JFrame {
 
         // ─── Top bar with animal + status ───
         JPanel top = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g;
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                // Warm gradient header
-                g2.setPaint(new GradientPaint(0, 0, new Color(255, 245, 240), 0, getHeight(), new Color(255, 235, 225)));
-                g2.fillRect(0, 0, getWidth(), getHeight());
-                // Subtle bottom border
-                g2.setColor(new Color(230, 190, 175, 80));
-                g2.drawLine(0, getHeight() - 1, getWidth(), getHeight() - 1);
-            }
-        };
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setPaint(new GradientPaint(0, 0, new Color(255, 245, 240), 0, getHeight(), new Color(255, 235, 225)));
+            g2.fillRect(0, 0, getWidth(), getHeight());
+            g2.setColor(new Color(230, 190, 175, 80));
+            g2.drawLine(0, getHeight() - 1, getWidth(), getHeight() - 1);
+
+            // Animal avatar
+            int cx = getWidth() / 2;
+            int imHeight = 122;
+            int imWidth = 174;
+            int avatarX = cx - imWidth / 2;
+            int avatarY = 8;
+
+            g2.drawImage(ImageTalk, avatarX, avatarY, imWidth, imHeight, null);
+
+            // Name + status
+            int textX = avatarX + imWidth - 26;
+            g2.setFont(new Font("SansSerif", Font.BOLD, 15));
+            g2.setColor(new Color(140, 76, 45));
+            g2.drawString("Your friend", textX, 35);
+            g2.setFont(new Font("SansSerif", Font.PLAIN, 11));
+            g2.setColor(new Color(180, 140, 130));
+            g2.drawString("always here for you \u2665", textX, 50);
+
+            g2.dispose();
+        }
+    };
+        
         top.setLayout(new BorderLayout());
-        top.setPreferredSize(new Dimension(0, 68));
+        top.setPreferredSize(new Dimension(0, 128));
 
         // Back button (warm style)
         JButton bk = new JButton("\u2190");
@@ -783,75 +804,8 @@ public class ShelterWellnessApp extends JFrame {
         centerInfo.setOpaque(false);
         centerInfo.setLayout(null);
 
-        // We'll paint the animal + text in the top panel's paint instead
-        JPanel headerPaint = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                int cx = getWidth() / 2;
-
-                // Draw small animal avatar
-                int avatarSize = 42;
-                int avatarX = cx - 70;
-                int avatarY = 13;
-
-                // Avatar circle background
-                g2.setColor(new Color(255, 220, 210));
-                g2.fillOval(avatarX, avatarY, avatarSize, avatarSize);
-                g2.setColor(new Color(230, 180, 165));
-                g2.setStroke(new BasicStroke(1.5f));
-                g2.drawOval(avatarX, avatarY, avatarSize, avatarSize);
-
-                // Draw tiny animal face inside circle
-                int acx = avatarX + avatarSize / 2;
-                int acy = avatarY + avatarSize / 2 + 2;
-                // Ears
-                g2.setColor(new Color(200, 181, 212));
-                g2.fillOval(acx - 14, acy - 18, 10, 14);
-                g2.fillOval(acx + 4, acy - 18, 10, 14);
-                // Inner ears
-                g2.setColor(new Color(240, 214, 232));
-                g2.fillOval(acx - 12, acy - 15, 6, 9);
-                g2.fillOval(acx + 6, acy - 15, 6, 9);
-                // Head
-                g2.setColor(new Color(200, 181, 212));
-                g2.fillOval(acx - 12, acy - 10, 24, 20);
-                // Eyes
-                g2.setColor(new Color(74, 63, 85));
-                g2.fillOval(acx - 6, acy - 3, 4, 5);
-                g2.fillOval(acx + 2, acy - 3, 4, 5);
-                // Eye shine
-                g2.setColor(Color.WHITE);
-                g2.fillOval(acx - 5, acy - 4, 2, 2);
-                g2.fillOval(acx + 3, acy - 4, 2, 2);
-                // Nose
-                g2.setColor(new Color(232, 160, 191));
-                g2.fillOval(acx - 2, acy + 2, 4, 3);
-                // Smile
-                g2.setColor(new Color(124, 111, 138));
-                g2.setStroke(new BasicStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-                g2.draw(new QuadCurve2D.Float(acx - 4, acy + 6, acx, acy + 9, acx + 4, acy + 6));
-                // Blush
-                g2.setColor(new Color(240, 200, 200, 100));
-                g2.fillOval(acx - 14, acy, 6, 4);
-                g2.fillOval(acx + 8, acy, 6, 4);
-
-                // Name + status
-                int textX = avatarX + avatarSize + 12;
-                g2.setFont(new Font("SansSerif", Font.BOLD, 15));
-                g2.setColor(new Color(140, 76, 45));
-                g2.drawString("Your friend", textX, 35);
-                g2.setFont(new Font("SansSerif", Font.PLAIN, 11));
-                g2.setColor(new Color(180, 140, 130));
-                g2.drawString("always here for you \u2665", textX, 50);
-
-                g2.dispose();
-            }
-        };
-        headerPaint.setOpaque(false);
-        top.add(headerPaint, BorderLayout.CENTER);
+        
+        // g.drawImage(ImageTalk, x, y, imgW, imgH, this);
 
         p.add(top, BorderLayout.NORTH);
 
@@ -1043,7 +997,7 @@ public class ShelterWellnessApp extends JFrame {
         bubble.setLayout(new BorderLayout());
         bubble.setOpaque(false);
 
-        JLabel label = new JLabel("<html><div style='padding:10px 14px;width:220px;font-size:13px;color:"
+        JLabel label = new JLabel("<html><div style='padding:10px 14px;width:220px;font-size:12px;color:"
             + (fromUser ? "#FFFFFF" : "#6B4A3C")
             + ";'>" + text + "</div></html>");
         label.setOpaque(false);
@@ -1090,33 +1044,42 @@ public class ShelterWellnessApp extends JFrame {
     }
 
     String reply(String m, boolean s) {
-        String l = m.toLowerCase();
-        if (s) {
-            if (l.contains("sad") || l.contains("cry") || l.contains("hurt"))
-                return "Your feelings are valid. You're not alone.";
-            if (l.contains("scared") || l.contains("afraid"))
-                return "It's okay to feel scared. You are safe here.";
-            if (l.contains("angry") || l.contains("mad"))
-                return "Your anger is valid \u2014 you deserve better.";
-            if (l.contains("alone") || l.contains("lonely"))
-                return "You are not alone. I'm here, and people care.";
-            if (l.contains("tired"))
-                return "Rest is so important. Be gentle with yourself.";
-            if (l.contains("thank"))
-                return "You don't need to thank me. You deserve kindness.";
-            String[] r = { "I'm listening. Take your time.", "You are stronger than you realize.",
-                    "It's okay to not be okay. I'm here.", "Be gentle with yourself.", "You matter." };
-            return r[(int) (Math.random() * r.length)];
-        } else {
-            if (l.contains("hello") || l.contains("hi") || l.contains("hey"))
-                return "Hello! What made you smile today?";
-            if (l.contains("thank"))
-                return "You're welcome! Your happiness brightens my day!";
-            String[] r = { "That's lovely! Tell me more!", "Keep shining!", "What else is on your mind?",
-                    "I'm glad you shared that!", "What else brings you joy?" };
-            return r[(int) (Math.random() * r.length)];
-        }
+    String l = m.toLowerCase();
+    
+    // 无论哪种模式，都先检测负面情绪
+    if (l.contains("sad") || l.contains("cry") || l.contains("hurt"))
+        return "I hear you. It's okay to feel this way. I'm right here with you.";
+    if (l.contains("scared") || l.contains("afraid"))
+        return "It's okay to feel scared. You are safe here.";
+    if (l.contains("angry") || l.contains("mad"))
+        return "Your anger is valid \u2014 you deserve better.";
+    if (l.contains("alone") || l.contains("lonely"))
+        return "You are not alone. I'm here, and people care about you.";
+    if (l.contains("tired") || l.contains("exhausted"))
+        return "Rest is so important. Be gentle with yourself.";
+    if (l.contains("help") || l.contains("support"))
+        return "I'm here for you. Would you like me to show you some support resources?";
+    if (l.contains("thank"))
+        return "You don't need to thank me. You deserve kindness.";
+    
+    // 正面/中性回复
+    if (l.contains("hello") || l.contains("hi") || l.contains("hey"))
+        return "Hello! I'm glad you're here. How are you feeling today?";
+    if (l.contains("good") || l.contains("happy") || l.contains("great"))
+        return "That's wonderful to hear! What made your day bright?";
+    
+    // 默认回复
+    if (s) {
+        String[] r = {"I'm listening. Take your time.", "You are stronger than you realize.",
+                "It's okay to not be okay. I'm here.", "Be gentle with yourself.", "You matter."};
+        return r[(int) (Math.random() * r.length)];
+    } else {
+        String[] r = {"Tell me more, I'm listening.", "I'm here for you, whatever you need.",
+                "What else is on your mind?", "I'm glad you're sharing with me.",
+                "Take your time. No rush."};
+        return r[(int) (Math.random() * r.length)];
     }
+}
 
     // ═══════ UTILITIES ═══════
     void navigate(String s) {
