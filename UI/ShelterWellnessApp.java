@@ -26,8 +26,7 @@ public class ShelterWellnessApp extends JFrame {
 
     private CardLayout cardLayout;
     private JPanel cardPanel;
-    private Image animalImage;
-    private Image ImageTalk;
+    private Image[] animals;
 
     static final Color BG_PRIMARY = new Color(255, 255, 255);
     static final Color BG_SECONDARY = new Color(35, 30, 48);
@@ -89,8 +88,18 @@ public class ShelterWellnessApp extends JFrame {
         setMinimumSize(new Dimension(820, 650));
         setLocationRelativeTo(null);
 
-        animalImage = new ImageIcon("public/images/animal/IMG_3491.PNG").getImage();
-        ImageTalk = new ImageIcon("public/images/animal/IMG_3497.PNG").getImage();
+        animals = new Image[] {
+                new ImageIcon("public/images/animal/drink.png").getImage(),
+                new ImageIcon("public/images/animal/eat.PNG").getImage(),
+                new ImageIcon("public/images/animal/first.PNG").getImage(),
+                new ImageIcon("public/images/animal/move.PNG").getImage(),
+                new ImageIcon("public/images/animal/music.PNG").getImage(),
+                new ImageIcon("public/images/animal/rest.PNG").getImage(),
+                new ImageIcon("public/images/animal/shy.PNG").getImage(),
+                new ImageIcon("public/images/animal/stretch.png").getImage(),
+                new ImageIcon("public/images/animal/talk.PNG").getImage(),
+                new ImageIcon("public/images/animal/think.PNG").getImage()
+        };
 
         Random rand = new Random();
         todayMusic = rand.nextInt(DAILY_MUSIC.length);
@@ -168,32 +177,101 @@ public class ShelterWellnessApp extends JFrame {
                 g2.setFont(FONT_TITLE);
                 ctr(g2, "What would feel most helpful right now?", cx, 120);
 
-                int btnW = 320, btnH = 50, gap = 16;
-                int y = 200;
+                int btnH = 64;
+                int startY = 165;
+                int gapY = 28;
+                int leftX = 200;
+                int rightX = 360;
+                int bubbleW = 330;
 
                 String[] texts = {
-                        "Something calming",
-                        "Something comforting",
-                        "Something to distract me",
-                        "I just want to talk"
+                        "Want to stretch with me for a minute?",
+                        "Can we take a slow breath together?",
+                        "Maybe a sip of water first?",
+                        "Want to change your spot with me?"
                 };
 
                 Rectangle[] btns = { calmBtn, comfortBtn, distractBtn, talkBtn };
 
+                Image[] chosen = {
+                        animals[7],
+                        animals[9],
+                        animals[0],
+                        animals[3]
+                };
+
                 for (int i = 0; i < 4; i++) {
-                    btns[i].setBounds(cx - btnW / 2, y, btnW, btnH);
+                    int y = startY + i * (btnH + gapY);
+                    boolean left = (i % 2 == 0);
 
-                    g2.setColor(hov == i ? alphaColor(ACCENT_TEAL, 30) : CARD_BG);
-                    g2.fillRoundRect(cx - btnW / 2, y, btnW, btnH, 16, 16);
+                    int curX = left ? leftX : rightX;
+                    btns[i].setBounds(curX, y, bubbleW, btnH);
 
-                    g2.setColor(alphaColor(ACCENT_TEAL, 70));
-                    g2.drawRoundRect(cx - btnW / 2, y, btnW, btnH, 16, 16);
+                    Image img = chosen[i];
+
+                    g2.setColor(hov == i ? alphaColor(ACCENT_PURPLE, 24) : CARD_BG);
+                    g2.fillRoundRect(curX, y, bubbleW, btnH, 24, 24);
+
+                    g2.setColor(alphaColor(ACCENT_PURPLE, hov == i ? 90 : 55));
+                    g2.setStroke(new BasicStroke(1.2f));
+                    g2.drawRoundRect(curX, y, bubbleW, btnH, 24, 24);
+
+                    Polygon tail = new Polygon();
+
+                    if (left) {
+                        tail.addPoint(curX, y + 22);
+                        tail.addPoint(curX - 16, y + 30);
+                        tail.addPoint(curX, y + 38);
+                    } else {
+                        tail.addPoint(curX + bubbleW, y + 22);
+                        tail.addPoint(curX + bubbleW + 16, y + 30);
+                        tail.addPoint(curX + bubbleW, y + 38);
+                    }
+
+                    g2.setColor(hov == i ? alphaColor(ACCENT_PURPLE, 24) : CARD_BG);
+                    g2.fillPolygon(tail);
+
+                    g2.setColor(alphaColor(ACCENT_PURPLE, hov == i ? 90 : 55));
+                    g2.drawPolygon(tail);
 
                     g2.setColor(TEXT_PRIMARY);
                     g2.setFont(FONT_BUTTON);
-                    ctr(g2, texts[i], cx, y + 32);
+                    ctr(g2, texts[i], curX + bubbleW / 2, y + 39);
 
-                    y += btnH + gap;
+                    int targetH;
+
+                    if (i == 0)
+                        targetH = 120; // 第一张放大一点
+                    else if (i == 2)
+                        targetH = 115;
+                    else if (i == 3)
+                        targetH = 125; // 第四张稍微放大
+                    else
+                        targetH = 100; // 其他保持
+                    int imgW = img.getWidth(this);
+                    int imgH = img.getHeight(this);
+                    int targetW = (int) (imgW * (targetH / (double) imgH));
+
+                    int offset = 105;
+
+                    int animalY = y + btnH / 2 - targetH / 2;
+
+                    int gap;
+
+                    if (i == 0)
+                        gap = 0; 
+                    else if (i == 3)
+                        gap = 0;
+                    else
+                        gap = 18;
+
+                    if (left) {
+                        int animalX = curX - gap - targetW;
+                        g2.drawImage(img, animalX, animalY, targetW, targetH, this);
+                    } else {
+                        int animalX = curX + bubbleW + gap + targetW;
+                        g2.drawImage(img, animalX, animalY, -targetW, targetH, this);
+                    }
                 }
 
                 g2.dispose();
@@ -201,7 +279,7 @@ public class ShelterWellnessApp extends JFrame {
         };
     }
 
-// ═══════ HOME — 4 cards + help link ═══════
+    // ═══════ HOME — 4 cards + help link ═══════
     // Replace your entire createHomeScreen() method with this:
     private JPanel createHomeScreen() {
         return new GradientPanel() {
@@ -218,7 +296,8 @@ public class ShelterWellnessApp extends JFrame {
                                 hov = i;
                                 break;
                             }
-                        if (helpLink.contains(e.getPoint())) hov = 99;
+                        if (helpLink.contains(e.getPoint()))
+                            hov = 99;
                         setCursor(
                                 hov >= 0 ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) : Cursor.getDefaultCursor());
                         if (prev != hov)
@@ -322,7 +401,8 @@ public class ShelterWellnessApp extends JFrame {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g;
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setPaint(new GradientPaint(0, 0, new Color(255, 245, 240), 0, getHeight(), new Color(255, 235, 228)));
+                g2.setPaint(
+                        new GradientPaint(0, 0, new Color(255, 245, 240), 0, getHeight(), new Color(255, 235, 228)));
                 g2.fillRect(0, 0, getWidth(), getHeight());
                 g2.setColor(new Color(230, 190, 175, 80));
                 g2.drawLine(0, getHeight() - 1, getWidth(), getHeight() - 1);
@@ -342,8 +422,13 @@ public class ShelterWellnessApp extends JFrame {
         bk.setPreferredSize(new Dimension(50, 60));
         bk.addActionListener(e -> navigate("home"));
         bk.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) { bk.setForeground(new Color(140, 76, 45)); }
-            public void mouseExited(MouseEvent e) { bk.setForeground(new Color(180, 120, 100)); }
+            public void mouseEntered(MouseEvent e) {
+                bk.setForeground(new Color(140, 76, 45));
+            }
+
+            public void mouseExited(MouseEvent e) {
+                bk.setForeground(new Color(180, 120, 100));
+            }
         });
         top.add(bk, BorderLayout.WEST);
 
@@ -367,7 +452,8 @@ public class ShelterWellnessApp extends JFrame {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g;
-                g2.setPaint(new GradientPaint(0, 0, new Color(255, 252, 248), 0, getHeight(), new Color(255, 243, 235)));
+                g2.setPaint(
+                        new GradientPaint(0, 0, new Color(255, 252, 248), 0, getHeight(), new Color(255, 243, 235)));
                 g2.fillRect(0, 0, getWidth(), getHeight());
             }
         };
@@ -376,12 +462,11 @@ public class ShelterWellnessApp extends JFrame {
 
         // Privacy notice
         JPanel privacyCard = createWarmCard(
-            "\uD83D\uDD12  Your privacy matters",
-            "If you are in immediate danger, call emergency services.",
-            new Color(180, 140, 120),
-            new Color(255, 248, 242),
-            new Color(240, 220, 210)
-        );
+                "\uD83D\uDD12  Your privacy matters",
+                "If you are in immediate danger, call emergency services.",
+                new Color(180, 140, 120),
+                new Color(255, 248, 242),
+                new Color(240, 220, 210));
         content.add(privacyCard);
         content.add(Box.createVerticalStrut(20));
 
@@ -395,19 +480,19 @@ public class ShelterWellnessApp extends JFrame {
 
         // Emergency numbers data
         String[][] emergencyNumbers = {
-            { "\uD83C\uDDE8\uD83C\uDDF3", "China",       "110",                  "Police" },
-            { "\uD83C\uDDFA\uD83C\uDDF8", "United States","911",                  "All emergencies" },
-            { "\uD83C\uDDE8\uD83C\uDDE6", "Canada",      "911",                  "All emergencies" },
-            { "\uD83C\uDDE6\uD83C\uDDFA", "Australia",   "000 / 112",            "Emergency / mobile" },
-            { "\uD83C\uDDF3\uD83C\uDDFF", "New Zealand", "111",                  "All emergencies" },
-            { "\uD83C\uDDEE\uD83C\uDDF3", "India",       "112 / 14490",          "Emergency / women helpline" },
-            { "\uD83C\uDDEC\uD83C\uDDE7", "United Kingdom","999 / 112",           "All emergencies" },
-            { "\uD83C\uDDEA\uD83C\uDDFA", "Europe",      "112",                  "Universal emergency" },
-            { "\uD83C\uDDF8\uD83C\uDDEC", "Singapore",   "999",                  "Police" },
-            { "\uD83C\uDDEF\uD83C\uDDF5", "Japan",       "110",                  "Police" },
-            { "\uD83C\uDDF0\uD83C\uDDF7", "Korea",       "112",                  "Police / emergency" },
-            { "\uD83C\uDDF9\uD83C\uDDED", "Thailand",    "191",                  "Police" },
-            { "\uD83C\uDDF2\uD83C\uDDFE", "Malaysia",    "999",                  "All emergencies" },
+                { "\uD83C\uDDE8\uD83C\uDDF3", "China", "110", "Police" },
+                { "\uD83C\uDDFA\uD83C\uDDF8", "United States", "911", "All emergencies" },
+                { "\uD83C\uDDE8\uD83C\uDDE6", "Canada", "911", "All emergencies" },
+                { "\uD83C\uDDE6\uD83C\uDDFA", "Australia", "000 / 112", "Emergency / mobile" },
+                { "\uD83C\uDDF3\uD83C\uDDFF", "New Zealand", "111", "All emergencies" },
+                { "\uD83C\uDDEE\uD83C\uDDF3", "India", "112 / 14490", "Emergency / women helpline" },
+                { "\uD83C\uDDEC\uD83C\uDDE7", "United Kingdom", "999 / 112", "All emergencies" },
+                { "\uD83C\uDDEA\uD83C\uDDFA", "Europe", "112", "Universal emergency" },
+                { "\uD83C\uDDF8\uD83C\uDDEC", "Singapore", "999", "Police" },
+                { "\uD83C\uDDEF\uD83C\uDDF5", "Japan", "110", "Police" },
+                { "\uD83C\uDDF0\uD83C\uDDF7", "Korea", "112", "Police / emergency" },
+                { "\uD83C\uDDF9\uD83C\uDDED", "Thailand", "191", "Police" },
+                { "\uD83C\uDDF2\uD83C\uDDFE", "Malaysia", "999", "All emergencies" },
         };
 
         for (String[] entry : emergencyNumbers) {
@@ -427,12 +512,12 @@ public class ShelterWellnessApp extends JFrame {
         content.add(orgTitle);
 
         String[][] orgs = {
-            { "National DV Hotline (US)", "1-800-799-7233", "24/7 confidential support" },
-            { "Crisis Text Line",         "Text HOME to 741741", "Free crisis counseling" },
-            { "RAINN (US)",               "1-800-656-4673", "Sexual assault support" },
-            { "Suicide & Crisis Lifeline", "988", "Call or text — 24/7" },
-            { "Women's Law",              "womenslaw.org", "Legal info for survivors" },
-            { "NAMI Helpline",            "1-800-950-6264", "Mental health support" },
+                { "National DV Hotline (US)", "1-800-799-7233", "24/7 confidential support" },
+                { "Crisis Text Line", "Text HOME to 741741", "Free crisis counseling" },
+                { "RAINN (US)", "1-800-656-4673", "Sexual assault support" },
+                { "Suicide & Crisis Lifeline", "988", "Call or text — 24/7" },
+                { "Women's Law", "womenslaw.org", "Legal info for survivors" },
+                { "NAMI Helpline", "1-800-950-6264", "Mental health support" },
         };
 
         for (String[] org : orgs) {
@@ -445,7 +530,7 @@ public class ShelterWellnessApp extends JFrame {
 
         // Bottom encouragement
         JLabel footer = new JLabel("<html><div style='text-align:center;color:#B08878;font-size:11px;'>"
-            + "You are not alone. Reaching out is a sign of strength.</div></html>");
+                + "You are not alone. Reaching out is a sign of strength.</div></html>");
         footer.setAlignmentX(Component.CENTER_ALIGNMENT);
         footer.setHorizontalAlignment(SwingConstants.CENTER);
         content.add(footer);
@@ -728,8 +813,6 @@ public class ShelterWellnessApp extends JFrame {
         };
     }
 
-    
-
     // ═══════ CHAT (redesigned - warm & beautiful) ═══════
     private JPanel buildChatScreen(String label, Color accent, boolean sup, String backTo) {
         JPanel p = new JPanel(new BorderLayout());
@@ -737,37 +820,38 @@ public class ShelterWellnessApp extends JFrame {
 
         // ─── Top bar with animal + status ───
         JPanel top = new JPanel() {
-        @Override
-        protected void paintComponent(Graphics g) {
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setPaint(new GradientPaint(0, 0, new Color(255, 245, 240), 0, getHeight(), new Color(255, 235, 225)));
-            g2.fillRect(0, 0, getWidth(), getHeight());
-            g2.setColor(new Color(230, 190, 175, 80));
-            g2.drawLine(0, getHeight() - 1, getWidth(), getHeight() - 1);
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setPaint(
+                        new GradientPaint(0, 0, new Color(255, 245, 240), 0, getHeight(), new Color(255, 235, 225)));
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                g2.setColor(new Color(230, 190, 175, 80));
+                g2.drawLine(0, getHeight() - 1, getWidth(), getHeight() - 1);
 
-            // Animal avatar
-            int cx = getWidth() / 2;
-            int imHeight = 122;
-            int imWidth = 174;
-            int avatarX = cx - imWidth / 2;
-            int avatarY = 8;
+                // Animal avatar
+                int cx = getWidth() / 2;
+                int imHeight = 122;
+                int imWidth = 174;
+                int avatarX = cx - imWidth / 2;
+                int avatarY = 8;
 
-            g2.drawImage(ImageTalk, avatarX, avatarY, imWidth, imHeight, null);
+                g2.drawImage(animals[8], avatarX, avatarY, imWidth, imHeight, null);
 
-            // Name + status
-            int textX = avatarX + imWidth - 26;
-            g2.setFont(new Font("SansSerif", Font.BOLD, 15));
-            g2.setColor(new Color(140, 76, 45));
-            g2.drawString("Your friend", textX, 35);
-            g2.setFont(new Font("SansSerif", Font.PLAIN, 11));
-            g2.setColor(new Color(180, 140, 130));
-            g2.drawString("always here for you \u2665", textX, 50);
+                // Name + status
+                int textX = avatarX + imWidth - 26;
+                g2.setFont(new Font("SansSerif", Font.BOLD, 15));
+                g2.setColor(new Color(140, 76, 45));
+                g2.drawString("Your friend", textX, 35);
+                g2.setFont(new Font("SansSerif", Font.PLAIN, 11));
+                g2.setColor(new Color(180, 140, 130));
+                g2.drawString("always here for you \u2665", textX, 50);
 
-            g2.dispose();
-        }
-    };
-        
+                g2.dispose();
+            }
+        };
+
         top.setLayout(new BorderLayout());
         top.setPreferredSize(new Dimension(0, 128));
 
@@ -784,8 +868,13 @@ public class ShelterWellnessApp extends JFrame {
         bk.setPreferredSize(new Dimension(50, 68));
         bk.addActionListener(e -> navigate(backTo));
         bk.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) { bk.setForeground(new Color(140, 76, 45)); }
-            public void mouseExited(MouseEvent e) { bk.setForeground(new Color(180, 120, 100)); }
+            public void mouseEntered(MouseEvent e) {
+                bk.setForeground(new Color(140, 76, 45));
+            }
+
+            public void mouseExited(MouseEvent e) {
+                bk.setForeground(new Color(180, 120, 100));
+            }
         });
         top.add(bk, BorderLayout.WEST);
 
@@ -804,7 +893,6 @@ public class ShelterWellnessApp extends JFrame {
         centerInfo.setOpaque(false);
         centerInfo.setLayout(null);
 
-        
         // g.drawImage(ImageTalk, x, y, imgW, imgH, this);
 
         p.add(top, BorderLayout.NORTH);
@@ -814,7 +902,8 @@ public class ShelterWellnessApp extends JFrame {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g;
-                g2.setPaint(new GradientPaint(0, 0, new Color(255, 252, 248), 0, getHeight(), new Color(255, 243, 235)));
+                g2.setPaint(
+                        new GradientPaint(0, 0, new Color(255, 252, 248), 0, getHeight(), new Color(255, 243, 235)));
                 g2.fillRect(0, 0, getWidth(), getHeight());
             }
         };
@@ -823,8 +912,8 @@ public class ShelterWellnessApp extends JFrame {
 
         // Initial greeting
         String greeting = sup
-            ? "I'm here for you. You can share anything, or we can just sit together quietly. \u2764"
-            : "Hey there! What's on your mind today? I'd love to hear from you \u2728";
+                ? "I'm here for you. You can share anything, or we can just sit together quietly. \u2764"
+                : "Hey there! What's on your mind today? I'd love to hear from you \u2728";
         addWarmBubble(chatArea, greeting, false, accent);
 
         JScrollPane cs = new JScrollPane(chatArea);
@@ -842,7 +931,8 @@ public class ShelterWellnessApp extends JFrame {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g;
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setPaint(new GradientPaint(0, 0, new Color(255, 245, 238), 0, getHeight(), new Color(255, 240, 230)));
+                g2.setPaint(
+                        new GradientPaint(0, 0, new Color(255, 245, 238), 0, getHeight(), new Color(255, 240, 230)));
                 g2.fillRect(0, 0, getWidth(), getHeight());
                 // Top border
                 g2.setColor(new Color(230, 200, 185, 60));
@@ -869,20 +959,22 @@ public class ShelterWellnessApp extends JFrame {
         in.setCaretColor(new Color(140, 76, 45));
         in.setOpaque(false);
         in.setBorder(BorderFactory.createCompoundBorder(
-            new AbstractBorder() {
-                @Override
-                public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {
-                    Graphics2D g2 = (Graphics2D) g;
-                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                    g2.setColor(new Color(220, 185, 170));
-                    g2.setStroke(new BasicStroke(1.2f));
-                    g2.drawRoundRect(x, y, w - 1, h - 1, 24, 24);
-                }
-                @Override
-                public Insets getBorderInsets(Component c) { return new Insets(0, 0, 0, 0); }
-            },
-            BorderFactory.createEmptyBorder(10, 16, 10, 16)
-        ));
+                new AbstractBorder() {
+                    @Override
+                    public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {
+                        Graphics2D g2 = (Graphics2D) g;
+                        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                        g2.setColor(new Color(220, 185, 170));
+                        g2.setStroke(new BasicStroke(1.2f));
+                        g2.drawRoundRect(x, y, w - 1, h - 1, 24, 24);
+                    }
+
+                    @Override
+                    public Insets getBorderInsets(Component c) {
+                        return new Insets(0, 0, 0, 0);
+                    }
+                },
+                BorderFactory.createEmptyBorder(10, 16, 10, 16)));
 
         // Send button (warm circle)
         JButton send = new JButton() {
@@ -894,10 +986,18 @@ public class ShelterWellnessApp extends JFrame {
                 setFocusPainted(false);
                 setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 addMouseListener(new MouseAdapter() {
-                    public void mouseEntered(MouseEvent e) { hover = true; repaint(); }
-                    public void mouseExited(MouseEvent e) { hover = false; repaint(); }
+                    public void mouseEntered(MouseEvent e) {
+                        hover = true;
+                        repaint();
+                    }
+
+                    public void mouseExited(MouseEvent e) {
+                        hover = false;
+                        repaint();
+                    }
                 });
             }
+
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
@@ -918,7 +1018,8 @@ public class ShelterWellnessApp extends JFrame {
 
         Runnable sendAction = () -> {
             String t2 = in.getText().trim();
-            if (t2.isEmpty()) return;
+            if (t2.isEmpty())
+                return;
             addWarmBubble(chatArea, t2, true, accent);
             in.setText("");
             chatArea.revalidate();
@@ -998,8 +1099,8 @@ public class ShelterWellnessApp extends JFrame {
         bubble.setOpaque(false);
 
         JLabel label = new JLabel("<html><div style='padding:10px 14px;width:220px;font-size:12px;color:"
-            + (fromUser ? "#FFFFFF" : "#6B4A3C")
-            + ";'>" + text + "</div></html>");
+                + (fromUser ? "#FFFFFF" : "#6B4A3C")
+                + ";'>" + text + "</div></html>");
         label.setOpaque(false);
         bubble.add(label);
 
@@ -1012,8 +1113,6 @@ public class ShelterWellnessApp extends JFrame {
         area.add(row);
         area.add(Box.createVerticalStrut(10));
     }
-
-
 
     void refreshRecipeDetail() {
         cardPanel.remove(2);
@@ -1044,42 +1143,42 @@ public class ShelterWellnessApp extends JFrame {
     }
 
     String reply(String m, boolean s) {
-    String l = m.toLowerCase();
-    
-    // 无论哪种模式，都先检测负面情绪
-    if (l.contains("sad") || l.contains("cry") || l.contains("hurt"))
-        return "I hear you. It's okay to feel this way. I'm right here with you.";
-    if (l.contains("scared") || l.contains("afraid"))
-        return "It's okay to feel scared. You are safe here.";
-    if (l.contains("angry") || l.contains("mad"))
-        return "Your anger is valid \u2014 you deserve better.";
-    if (l.contains("alone") || l.contains("lonely"))
-        return "You are not alone. I'm here, and people care about you.";
-    if (l.contains("tired") || l.contains("exhausted"))
-        return "Rest is so important. Be gentle with yourself.";
-    if (l.contains("help") || l.contains("support"))
-        return "I'm here for you. Would you like me to show you some support resources?";
-    if (l.contains("thank"))
-        return "You don't need to thank me. You deserve kindness.";
-    
-    // 正面/中性回复
-    if (l.contains("hello") || l.contains("hi") || l.contains("hey"))
-        return "Hello! I'm glad you're here. How are you feeling today?";
-    if (l.contains("good") || l.contains("happy") || l.contains("great"))
-        return "That's wonderful to hear! What made your day bright?";
-    
-    // 默认回复
-    if (s) {
-        String[] r = {"I'm listening. Take your time.", "You are stronger than you realize.",
-                "It's okay to not be okay. I'm here.", "Be gentle with yourself.", "You matter."};
-        return r[(int) (Math.random() * r.length)];
-    } else {
-        String[] r = {"Tell me more, I'm listening.", "I'm here for you, whatever you need.",
-                "What else is on your mind?", "I'm glad you're sharing with me.",
-                "Take your time. No rush."};
-        return r[(int) (Math.random() * r.length)];
+        String l = m.toLowerCase();
+
+        // 无论哪种模式，都先检测负面情绪
+        if (l.contains("sad") || l.contains("cry") || l.contains("hurt"))
+            return "I hear you. It's okay to feel this way. I'm right here with you.";
+        if (l.contains("scared") || l.contains("afraid"))
+            return "It's okay to feel scared. You are safe here.";
+        if (l.contains("angry") || l.contains("mad"))
+            return "Your anger is valid \u2014 you deserve better.";
+        if (l.contains("alone") || l.contains("lonely"))
+            return "You are not alone. I'm here, and people care about you.";
+        if (l.contains("tired") || l.contains("exhausted"))
+            return "Rest is so important. Be gentle with yourself.";
+        if (l.contains("help") || l.contains("support"))
+            return "I'm here for you. Would you like me to show you some support resources?";
+        if (l.contains("thank"))
+            return "You don't need to thank me. You deserve kindness.";
+
+        // 正面/中性回复
+        if (l.contains("hello") || l.contains("hi") || l.contains("hey"))
+            return "Hello! I'm glad you're here. How are you feeling today?";
+        if (l.contains("good") || l.contains("happy") || l.contains("great"))
+            return "That's wonderful to hear! What made your day bright?";
+
+        // 默认回复
+        if (s) {
+            String[] r = { "I'm listening. Take your time.", "You are stronger than you realize.",
+                    "It's okay to not be okay. I'm here.", "Be gentle with yourself.", "You matter." };
+            return r[(int) (Math.random() * r.length)];
+        } else {
+            String[] r = { "Tell me more, I'm listening.", "I'm here for you, whatever you need.",
+                    "What else is on your mind?", "I'm glad you're sharing with me.",
+                    "Take your time. No rush." };
+            return r[(int) (Math.random() * r.length)];
+        }
     }
-}
 
     // ═══════ UTILITIES ═══════
     void navigate(String s) {
@@ -1143,15 +1242,19 @@ public class ShelterWellnessApp extends JFrame {
     }
 
     void drawAnimal(Graphics2D g, int cx, int ty, float s, boolean happy) {
+        if (animals == null || animals.length == 0)
+            return;
+
+        Image img = animals[2];
+
         int imgW = (int) (260 * s);
         int imgH = (int) (200 * s);
 
         int x = cx - imgW / 2;
         int y = ty - 40;
 
-        g.drawImage(animalImage, x, y, imgW, imgH, this);
+        g.drawImage(img, x, y, imgW, imgH, this);
     }
-
 
     static class GradientPanel extends JPanel {
         @Override
