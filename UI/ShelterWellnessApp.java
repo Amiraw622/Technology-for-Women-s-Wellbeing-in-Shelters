@@ -116,11 +116,8 @@ public class ShelterWellnessApp extends JFrame {
                 "recipedetail");
         cardPanel.add(createMoodCheckScreen(), "moodcheck");
         cardPanel.add(createSupportChoiceScreen(), "supportChoice");
-        cardPanel.add(createEnjoyScreen(), "enjoy");
-        cardPanel.add(createWhatsGoingOnScreen(), "whatsup");
         cardPanel.add(createSupportOptionsScreen(), "support");
         cardPanel.add(createHelpResourcesScreen(), "help");
-        cardPanel.add(createMusicExerciseScreen(), "music");
         cardPanel.add(buildChatScreen("Talk", ACCENT_CORAL, true, "home"), "talk");
         cardPanel.add(buildChatScreen("Chat", ACCENT_TEAL, false, "home"), "freechat");
 
@@ -809,113 +806,6 @@ public class ShelterWellnessApp extends JFrame {
         };
     }
 
-    // ═══════ ENJOY ═══════
-    private JPanel createEnjoyScreen() {
-        return new GradientPanel() {
-            final Rectangle btn = new Rectangle();
-            int hov = -1;
-            {
-                MouseAdapter ma = new MouseAdapter() {
-                    public void mouseMoved(MouseEvent e) {
-                        int p = hov;
-                        hov = btn.contains(e.getPoint()) ? 0 : -1;
-                        setCursor(
-                                hov >= 0 ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) : Cursor.getDefaultCursor());
-                        if (p != hov)
-                            repaint();
-                    }
-
-                    public void mouseClicked(MouseEvent e) {
-                        if (btn.contains(e.getPoint()))
-                            navigate("home");
-                    }
-                };
-                addMouseListener(ma);
-                addMouseMotionListener(ma);
-            }
-
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2 = setup(g);
-                int w = getWidth(), cx = w / 2;
-                drawAnimal(g2, cx, 100, 1.2f, true);
-                g2.setFont(FONT_TITLE);
-                gradText(g2, "Enjoy your day!", cx, 240, ACCENT_TEAL, ACCENT_WARM);
-                g2.setFont(FONT_SUBTITLE);
-                g2.setColor(TEXT_MUTED);
-                ctr(g2, "I'm always here if you need me", cx, 270);
-                int bX = cx - 90, bY = 310;
-                btn.setBounds(bX, bY, 180, 44);
-                g2.setColor(hov == 0 ? CARD_HOVER : CARD_BG);
-                g2.fillRoundRect(bX, bY, 180, 44, 14, 14);
-                g2.setColor(CARD_BORDER);
-                g2.setStroke(new BasicStroke(1));
-                g2.drawRoundRect(bX, bY, 180, 44, 14, 14);
-                g2.setFont(FONT_BUTTON);
-                g2.setColor(TEXT_SECONDARY);
-                ctr(g2, "\u2190  Home", cx, bY + 28);
-                g2.dispose();
-            }
-        };
-    }
-
-    // ═══════ WHAT'S GOING ON ═══════
-    private JPanel createWhatsGoingOnScreen() {
-        return new GradientPanel() {
-            final Rectangle cont = new Rectangle(), back = new Rectangle();
-            int hov = -1;
-            {
-                MouseAdapter ma = new MouseAdapter() {
-                    public void mouseMoved(MouseEvent e) {
-                        int p = hov;
-                        hov = back.contains(e.getPoint()) ? 0 : cont.contains(e.getPoint()) ? 1 : -1;
-                        setCursor(
-                                hov >= 0 ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) : Cursor.getDefaultCursor());
-                        if (p != hov)
-                            repaint();
-                    }
-
-                    public void mouseClicked(MouseEvent e) {
-                        if (back.contains(e.getPoint()))
-                            navigate("moodcheck");
-                        else if (cont.contains(e.getPoint()))
-                            navigate("home");
-                    }
-                };
-                addMouseListener(ma);
-                addMouseMotionListener(ma);
-            }
-
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2 = setup(g);
-                int w = getWidth(), cx = w / 2;
-                drawBack(g2, 20, 20, back);
-                drawAnimal(g2, cx, 60, 0.9f, false);
-                g2.setFont(FONT_TITLE);
-                g2.setColor(TEXT_PRIMARY);
-                ctr(g2, "That's okay.", cx, 175);
-                g2.setFont(FONT_BODY);
-                g2.setColor(TEXT_SECONDARY);
-                ctr(g2, "Some days are harder than others.", cx, 210);
-                ctr(g2, "I'm here, and I'd like to help", cx, 232);
-                ctr(g2, "if you'd let me.", cx, 254);
-                int bW = 280, bH = 50, bX = cx - bW / 2, bY = 300;
-                cont.setBounds(bX, bY, bW, bH);
-                g2.setColor(hov == 1 ? alphaColor(ACCENT_PURPLE, 30) : CARD_BG);
-                g2.fillRoundRect(bX, bY, bW, bH, 16, 16);
-                g2.setColor(alphaColor(ACCENT_PURPLE, 70));
-                g2.setStroke(new BasicStroke(1.2f));
-                g2.drawRoundRect(bX, bY, bW, bH, 16, 16);
-                g2.setFont(FONT_BUTTON);
-                g2.setColor(ACCENT_PURPLE);
-                ctr(g2, "Show me what can help", cx, bY + 31);
-                g2.dispose();
-            }
-        };
-    }
 
     // ═══════ SUPPORT OPTIONS ═══════
     private JPanel createSupportOptionsScreen() {
@@ -1013,52 +903,6 @@ public class ShelterWellnessApp extends JFrame {
         };
     }
 
-    // ═══════ HELP RESOURCES ═══════
-    
-
-    // ═══════ MUSIC & EXERCISE ═══════
-    private JPanel createMusicExerciseScreen() {
-        JPanel p = new JPanel(new BorderLayout());
-        p.setBackground(BG_PRIMARY);
-        JButton bk = styledBtn("\u2190 Back");
-        bk.addActionListener(e -> navigate("home"));
-        JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        top.setBackground(BG_SECONDARY);
-        top.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
-        top.add(bk);
-        JLabel tt = new JLabel("Music & Exercise");
-        tt.setFont(FONT_TITLE);
-        tt.setForeground(ACCENT_PURPLE);
-        tt.setBorder(BorderFactory.createEmptyBorder(4, 12, 0, 0));
-        top.add(tt);
-        p.add(top, BorderLayout.NORTH);
-        JPanel ct = new JPanel();
-        ct.setLayout(new BoxLayout(ct, BoxLayout.Y_AXIS));
-        ct.setBackground(BG_PRIMARY);
-        ct.setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
-        secLabel(ct, "Calming Sounds");
-        String[][] snd = { { "\uD83C\uDF27", "Gentle Rain" }, { "\uD83C\uDF0A", "Ocean Waves" },
-                { "\uD83C\uDF3F", "Forest Birds" }, { "\uD83C\uDFB9", "Soft Piano" },
-                { "\uD83C\uDF19", "Night Crickets" }, { "\uD83D\uDD25", "Warm Fireplace" } };
-        for (String[] s : snd) {
-            ct.add(optBtn(s[0] + "  " + s[1], ACCENT_PURPLE));
-            ct.add(Box.createVerticalStrut(6));
-        }
-        ct.add(Box.createVerticalStrut(16));
-        secLabel(ct, "Quick Exercises");
-        String[][] ex = { { "\uD83E\uDDD8", "Deep Breathing (2 min)" }, { "\uD83D\uDCAA", "Gentle Stretching (5 min)" },
-                { "\uD83D\uDE4F", "Body Scan Relaxation (3 min)" } };
-        for (String[] e : ex) {
-            ct.add(optBtn(e[0] + "  " + e[1], ACCENT_TEAL));
-            ct.add(Box.createVerticalStrut(6));
-        }
-        JScrollPane sc = new JScrollPane(ct);
-        sc.setBorder(null);
-        sc.getViewport().setBackground(BG_PRIMARY);
-        sc.getVerticalScrollBar().setUnitIncrement(16);
-        p.add(sc, BorderLayout.CENTER);
-        return p;
-    }
 
     // ═══════ CHAT (redesigned - warm & beautiful) ═══════
     private JPanel buildChatScreen(String label, Color accent, boolean sup, String backTo) {
