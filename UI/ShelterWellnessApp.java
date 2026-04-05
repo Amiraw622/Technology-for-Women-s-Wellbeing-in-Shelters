@@ -119,7 +119,14 @@ public class ShelterWellnessApp extends JFrame {
         cardPanel.add(createHelpResourcesScreen(), "help");
         cardPanel.add(buildChatScreen("Talk", ACCENT_CORAL, true, "home"), "talk");
         cardPanel.add(buildChatScreen("Chat", ACCENT_TEAL, false, "home"), "freechat");
-
+        cardPanel.add(createSupportChoiceScreen(), "supportChoice");
+        cardPanel.add(createStretchScreen(), "stretch");
+        cardPanel.add(createBreathScreen(), "breath");
+        cardPanel.add(createWaterScreen(), "water");
+        cardPanel.add(createMoveScreen(), "move");
+        cardPanel.add(createHelpResourcesScreen(), "help");
+        cardPanel.add(buildChatScreen("Talk", ACCENT_CORAL, true, "home"), "talk");
+        cardPanel.add(buildChatScreen("Chat", ACCENT_TEAL, false, "home"), "freechat");
         add(cardPanel);
         cardLayout.show(cardPanel, "home");
     }
@@ -147,13 +154,13 @@ public class ShelterWellnessApp extends JFrame {
 
                     public void mouseClicked(MouseEvent e) {
                         if (calmBtn.contains(e.getPoint()))
-                            navigate("musicdetail");
+                            navigate("stretch");
                         else if (comfortBtn.contains(e.getPoint()))
-                            navigate("recipedetail");
+                            navigate("breath");
                         else if (distractBtn.contains(e.getPoint()))
-                            navigate("musicdetail");
+                            navigate("water");
                         else if (talkBtn.contains(e.getPoint()))
-                            navigate("talk");
+                            navigate("move");
                     }
 
                     public void mouseExited(MouseEvent e) {
@@ -241,25 +248,23 @@ public class ShelterWellnessApp extends JFrame {
                     int targetH;
 
                     if (i == 0)
-                        targetH = 120; // 第一张放大一点
+                        targetH = 120;
                     else if (i == 2)
                         targetH = 115;
                     else if (i == 3)
-                        targetH = 125; // 第四张稍微放大
+                        targetH = 125;
                     else
-                        targetH = 100; // 其他保持
+                        targetH = 100;
                     int imgW = img.getWidth(this);
                     int imgH = img.getHeight(this);
                     int targetW = (int) (imgW * (targetH / (double) imgH));
-
-                    int offset = 105;
 
                     int animalY = y + btnH / 2 - targetH / 2;
 
                     int gap;
 
                     if (i == 0)
-                        gap = 0; 
+                        gap = 0;
                     else if (i == 3)
                         gap = 0;
                     else
@@ -365,7 +370,6 @@ public class ShelterWellnessApp extends JFrame {
                 cards[3].setBounds(cX, y, cW, cH);
                 cardIcon(g2, cX, y, "\u2728", ACCENT_PURPLE, hov == 3);
                 cardText(g2, cX, y, "Do something", "Find what feels right", ACCENT_PURPLE, hov == 3);
-
 
                 // Help & Support link — uses helpLink, NOT cards[3]
                 int linkY = getHeight() - 50;
@@ -509,12 +513,14 @@ public class ShelterWellnessApp extends JFrame {
         content.add(orgTitle);
 
         String[][] orgs = {
-                { "Assaulted Women's Helpline", "https://www.awhl.org/", "24/7 crisis counselling and emotional support" },
+                { "Assaulted Women's Helpline", "https://www.awhl.org/",
+                        "24/7 crisis counselling and emotional support" },
                 { "Crisis Centre BC", "https://www.crisiscentre.bc.ca/", "Barrier-free, non-judgemental support" },
                 { "RAINN (US)", "800.656.HOPE", "National Sexual Assault Hotline" },
                 { "Rise", "https://www.womenslegalcentre.ca/", "Women's legal centre" },
                 { "ASHIYANAA (South Asia)", "1-888-417-2742", "Culturally-competent support services (violence)" },
-                { "WAVE (EUROPE)", "https://wave-network.org/list-of-helplines-in-46-countries/", "A table of the national women's helplines in the 46 European Countries" },
+                { "WAVE (EUROPE)", "https://wave-network.org/list-of-helplines-in-46-countries/",
+                        "A table of the national women's helplines in the 46 European Countries" },
         };
 
         for (String[] org : orgs) {
@@ -810,6 +816,147 @@ public class ShelterWellnessApp extends JFrame {
         };
     }
 
+    private JPanel createActionScreen(String title, String subtitle, String body, Color accent, String backTo) {
+        return new GradientPanel() {
+            int hov = -1;
+            final Rectangle backBtn = new Rectangle();
+            final Rectangle doneBtn = new Rectangle();
+
+            {
+                MouseAdapter ma = new MouseAdapter() {
+                    @Override
+                    public void mouseMoved(MouseEvent e) {
+                        hov = backBtn.contains(e.getPoint()) ? 0
+                                : doneBtn.contains(e.getPoint()) ? 1
+                                        : -1;
+                        setCursor(hov >= 0
+                                ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
+                                : Cursor.getDefaultCursor());
+                        repaint();
+                    }
+
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (backBtn.contains(e.getPoint()))
+                            navigate(backTo);
+                        else if (doneBtn.contains(e.getPoint()))
+                            navigate("home");
+                    }
+
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+                        hov = -1;
+                        repaint();
+                    }
+                };
+                addMouseListener(ma);
+                addMouseMotionListener(ma);
+            }
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = setup(g);
+
+                int w = getWidth();
+                int cx = w / 2;
+                int boxW = 430;
+                int boxH = 190;
+                int boxX = cx - boxW / 2;
+                int boxY = 220;
+
+                drawBack(g2, 20, 20, backBtn);
+
+                g2.setFont(FONT_DETAIL_TITLE);
+                g2.setColor(TEXT_PRIMARY);
+                ctr(g2, title, cx, 140);
+
+                g2.setFont(FONT_SUBTITLE);
+                g2.setColor(TEXT_MUTED);
+                ctr(g2, subtitle, cx, 170);
+
+                g2.setColor(CARD_BG);
+                g2.fillRoundRect(boxX, boxY, boxW, boxH, 20, 20);
+                g2.setColor(alphaColor(accent, 70));
+                g2.setStroke(new BasicStroke(1.2f));
+                g2.drawRoundRect(boxX, boxY, boxW, boxH, 20, 20);
+
+                g2.setFont(FONT_BODY);
+                g2.setColor(TEXT_SECONDARY);
+
+                int textY = boxY + 36;
+                for (String line : body.split("\n")) {
+                    g2.drawString(line, boxX + 24, textY);
+                    textY += 28;
+                }
+
+                int btnW = 180, btnH = 42;
+                int btnX = cx - btnW / 2;
+                int btnY = boxY + boxH + 24;
+
+                doneBtn.setBounds(btnX, btnY, btnW, btnH);
+                g2.setColor(hov == 1 ? alphaColor(accent, 28) : CARD_BG);
+                g2.fillRoundRect(btnX, btnY, btnW, btnH, 18, 18);
+                g2.setColor(alphaColor(accent, 80));
+                g2.drawRoundRect(btnX, btnY, btnW, btnH, 18, 18);
+
+                g2.setFont(FONT_BUTTON);
+                g2.setColor(accent);
+                ctr(g2, "Done", cx, btnY + 27);
+
+                g2.dispose();
+            }
+        };
+    }
+
+    private JPanel createStretchScreen() {
+        return createActionScreen(
+                "Stretch with me",
+                "Just one quiet minute",
+                "1. Roll your shoulders slowly.\n"
+                        + "2. Reach your arms up gently.\n"
+                        + "3. Turn your neck left and right.\n"
+                        + "4. Let your body loosen a little.",
+                ACCENT_PURPLE,
+                "supportChoice");
+    }
+
+    private JPanel createBreathScreen() {
+        return createActionScreen(
+                "Take a slow breath",
+                "We can go gently",
+                "1. Breathe in for 4.\n"
+                        + "2. Hold for 2.\n"
+                        + "3. Breathe out for 6.\n"
+                        + "4. Repeat a few times.",
+                ACCENT_TEAL,
+                "supportChoice");
+    }
+
+    private JPanel createWaterScreen() {
+        return createActionScreen(
+                "A sip of water",
+                "A tiny reset is enough",
+                "1. Take one small sip.\n"
+                        + "2. Sit for a moment.\n"
+                        + "3. Notice your breathing.\n"
+                        + "4. You do not need to rush.",
+                ACCENT_WARM,
+                "supportChoice");
+    }
+
+    private JPanel createMoveScreen() {
+        return createActionScreen(
+                "Change your spot",
+                "A small change can help",
+                "1. Stand up slowly.\n"
+                        + "2. Take a few steps.\n"
+                        + "3. Sit somewhere that feels better.\n"
+                        + "4. Let your body settle there.",
+                ACCENT_ROSE,
+                "supportChoice");
+    }
+
     // ═══════ CHAT (选项式，不需要打字) ═══════
     private JPanel buildChatScreen(String label, Color accent, boolean sup, String backTo) {
         JPanel p = new JPanel(new BorderLayout());
@@ -821,7 +968,8 @@ public class ShelterWellnessApp extends JFrame {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setPaint(new GradientPaint(0, 0, new Color(255, 245, 240), 0, getHeight(), new Color(255, 235, 225)));
+                g2.setPaint(
+                        new GradientPaint(0, 0, new Color(255, 245, 240), 0, getHeight(), new Color(255, 235, 225)));
                 g2.fillRect(0, 0, getWidth(), getHeight());
                 g2.setColor(new Color(230, 190, 175, 80));
                 g2.drawLine(0, getHeight() - 1, getWidth(), getHeight() - 1);
@@ -866,7 +1014,8 @@ public class ShelterWellnessApp extends JFrame {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g;
-                g2.setPaint(new GradientPaint(0, 0, new Color(255, 252, 248), 0, getHeight(), new Color(255, 243, 235)));
+                g2.setPaint(
+                        new GradientPaint(0, 0, new Color(255, 252, 248), 0, getHeight(), new Color(255, 243, 235)));
                 g2.fillRect(0, 0, getWidth(), getHeight());
             }
         };
@@ -886,7 +1035,8 @@ public class ShelterWellnessApp extends JFrame {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g;
-                g2.setPaint(new GradientPaint(0, 0, new Color(255, 245, 238), 0, getHeight(), new Color(255, 240, 230)));
+                g2.setPaint(
+                        new GradientPaint(0, 0, new Color(255, 245, 238), 0, getHeight(), new Color(255, 240, 230)));
                 g2.fillRect(0, 0, getWidth(), getHeight());
                 g2.setColor(new Color(230, 200, 185, 60));
                 g2.drawLine(0, 0, getWidth(), 0);
@@ -907,11 +1057,11 @@ public class ShelterWellnessApp extends JFrame {
         addWarmBubble(chatArea, "Hey, I'm glad you're here. How are you feeling right now?", false, ACCENT_TEAL);
 
         String[] options = {
-            "I'm doing okay \uD83D\uDE0A",
-            "Not great today \uD83D\uDE14",
-            "I feel lonely",
-            "I'm scared",
-            "I just want company"
+                "I'm doing okay \uD83D\uDE0A",
+                "Not great today \uD83D\uDE14",
+                "I feel lonely",
+                "I'm scared",
+                "I just want company"
         };
 
         showOptions(chatArea, bottomPanel, cs, options, choice -> {
@@ -930,28 +1080,34 @@ public class ShelterWellnessApp extends JFrame {
     private void showHappyPath(JPanel chatArea, JPanel bottomPanel, JScrollPane cs) {
         delayBubble(chatArea, cs, "That's nice to hear! What would you like to do?", () -> {
             String[] options = {
-                "Tell me something positive \u2728",
-                "Share a fun fact \uD83D\uDCA1",
-                "Give me a compliment \uD83D\uDC9B",
-                "I changed my mind, I need support",
-                "\u2190 Go back home"
+                    "Tell me something positive \u2728",
+                    "Share a fun fact \uD83D\uDCA1",
+                    "Give me a compliment \uD83D\uDC9B",
+                    "I changed my mind, I need support",
+                    "\u2190 Go back home"
             };
             showOptions(chatArea, bottomPanel, cs, options, choice -> {
                 addWarmBubble(chatArea, choice, true, ACCENT_TEAL);
                 String lower = choice.toLowerCase();
 
                 if (lower.contains("positive")) {
-                    delayBubble(chatArea, cs, "Every sunrise is a reminder that you can begin again. You're doing amazing just by being here.", () -> {
-                        showContinueOrHome(chatArea, bottomPanel, cs, true);
-                    });
+                    delayBubble(chatArea, cs,
+                            "Every sunrise is a reminder that you can begin again. You're doing amazing just by being here.",
+                            () -> {
+                                showContinueOrHome(chatArea, bottomPanel, cs, true);
+                            });
                 } else if (lower.contains("fun fact")) {
-                    delayBubble(chatArea, cs, "Did you know? Otters hold hands while they sleep so they don't drift apart. You're never truly alone either.", () -> {
-                        showContinueOrHome(chatArea, bottomPanel, cs, true);
-                    });
+                    delayBubble(chatArea, cs,
+                            "Did you know? Otters hold hands while they sleep so they don't drift apart. You're never truly alone either.",
+                            () -> {
+                                showContinueOrHome(chatArea, bottomPanel, cs, true);
+                            });
                 } else if (lower.contains("compliment")) {
-                    delayBubble(chatArea, cs, "You are braver than you believe, stronger than you seem, and more loved than you know.", () -> {
-                        showContinueOrHome(chatArea, bottomPanel, cs, true);
-                    });
+                    delayBubble(chatArea, cs,
+                            "You are braver than you believe, stronger than you seem, and more loved than you know.",
+                            () -> {
+                                showContinueOrHome(chatArea, bottomPanel, cs, true);
+                            });
                 } else if (lower.contains("support")) {
                     showSupportPath(chatArea, bottomPanel, cs);
                 } else if (lower.contains("home")) {
@@ -965,11 +1121,11 @@ public class ShelterWellnessApp extends JFrame {
     private void showSupportPath(JPanel chatArea, JPanel bottomPanel, JScrollPane cs) {
         delayBubble(chatArea, cs, "I'm here for you. You're not alone in this. What would help most right now?", () -> {
             String[] options = {
-                "I need someone to talk to \uD83D\uDCAC",
-                "Show me calming music \uD83C\uDFB5",
-                "I want to cook something \uD83C\uDF75",
-                "Show me help resources \u260E",
-                "Just stay with me quietly \uD83E\uDD0D"
+                    "I need someone to talk to \uD83D\uDCAC",
+                    "Show me calming music \uD83C\uDFB5",
+                    "I want to cook something \uD83C\uDF75",
+                    "Show me help resources \u260E",
+                    "Just stay with me quietly \uD83E\uDD0D"
             };
             showOptions(chatArea, bottomPanel, cs, options, choice -> {
                 addWarmBubble(chatArea, choice, true, ACCENT_TEAL);
@@ -982,9 +1138,10 @@ public class ShelterWellnessApp extends JFrame {
                         navigate("musicdetail");
                     });
                 } else if (lower.contains("cook")) {
-                    delayBubble(chatArea, cs, "Making something warm can feel so comforting. Let's find a recipe.", () -> {
-                        navigate("recipedetail");
-                    });
+                    delayBubble(chatArea, cs, "Making something warm can feel so comforting. Let's find a recipe.",
+                            () -> {
+                                navigate("recipedetail");
+                            });
                 } else if (lower.contains("help resources")) {
                     delayBubble(chatArea, cs, "There are people who care and want to help. Let me show you.", () -> {
                         navigate("help");
@@ -1000,36 +1157,44 @@ public class ShelterWellnessApp extends JFrame {
     private void showTalkPath(JPanel chatArea, JPanel bottomPanel, JScrollPane cs) {
         delayBubble(chatArea, cs, "I'm listening. Can you tell me a little more about how you're feeling?", () -> {
             String[] options = {
-                "I feel sad and I don't know why",
-                "Someone hurt me",
-                "I'm worried about my safety",
-                "I feel overwhelmed",
-                "I don't want to say, just comfort me"
+                    "I feel sad and I don't know why",
+                    "Someone hurt me",
+                    "I'm worried about my safety",
+                    "I feel overwhelmed",
+                    "I don't want to say, just comfort me"
             };
             showOptions(chatArea, bottomPanel, cs, options, choice -> {
                 addWarmBubble(chatArea, choice, true, ACCENT_TEAL);
                 String lower = choice.toLowerCase();
 
                 if (lower.contains("sad")) {
-                    delayBubble(chatArea, cs, "It's okay to feel sad without knowing why. Your feelings are valid. You don't have to figure it all out right now.", () -> {
-                        showAfterSupport(chatArea, bottomPanel, cs);
-                    });
+                    delayBubble(chatArea, cs,
+                            "It's okay to feel sad without knowing why. Your feelings are valid. You don't have to figure it all out right now.",
+                            () -> {
+                                showAfterSupport(chatArea, bottomPanel, cs);
+                            });
                 } else if (lower.contains("hurt me")) {
-                    delayBubble(chatArea, cs, "I'm so sorry that happened to you. You didn't deserve that. You are worthy of safety and respect.", () -> {
-                        showSafetyOptions(chatArea, bottomPanel, cs);
-                    });
+                    delayBubble(chatArea, cs,
+                            "I'm so sorry that happened to you. You didn't deserve that. You are worthy of safety and respect.",
+                            () -> {
+                                showSafetyOptions(chatArea, bottomPanel, cs);
+                            });
                 } else if (lower.contains("safety")) {
-                    delayBubble(chatArea, cs, "Your safety matters most. Here are some resources that can help right now.", () -> {
-                        showSafetyOptions(chatArea, bottomPanel, cs);
-                    });
+                    delayBubble(chatArea, cs,
+                            "Your safety matters most. Here are some resources that can help right now.", () -> {
+                                showSafetyOptions(chatArea, bottomPanel, cs);
+                            });
                 } else if (lower.contains("overwhelmed")) {
-                    delayBubble(chatArea, cs, "Take a deep breath with me. In... 2... 3... 4... Out... 2... 3... 4... 5... 6... You're doing so well.", () -> {
-                        showAfterSupport(chatArea, bottomPanel, cs);
-                    });
+                    delayBubble(chatArea, cs,
+                            "Take a deep breath with me. In... 2... 3... 4... Out... 2... 3... 4... 5... 6... You're doing so well.",
+                            () -> {
+                                showAfterSupport(chatArea, bottomPanel, cs);
+                            });
                 } else if (lower.contains("comfort")) {
-                    delayBubble(chatArea, cs, "You are safe here. You are enough. You are loved. Take all the time you need.", () -> {
-                        showAfterSupport(chatArea, bottomPanel, cs);
-                    });
+                    delayBubble(chatArea, cs,
+                            "You are safe here. You are enough. You are loved. Take all the time you need.", () -> {
+                                showAfterSupport(chatArea, bottomPanel, cs);
+                            });
                 }
             });
         });
@@ -1038,9 +1203,9 @@ public class ShelterWellnessApp extends JFrame {
     // ─── Safety options ───
     private void showSafetyOptions(JPanel chatArea, JPanel bottomPanel, JScrollPane cs) {
         String[] options = {
-            "Show me emergency numbers \u260E",
-            "I want to keep talking",
-            "Take me home"
+                "Show me emergency numbers \u260E",
+                "I want to keep talking",
+                "Take me home"
         };
         showOptions(chatArea, bottomPanel, cs, options, choice -> {
             addWarmBubble(chatArea, choice, true, ACCENT_TEAL);
@@ -1068,10 +1233,10 @@ public class ShelterWellnessApp extends JFrame {
     // ─── After support: what next ───
     private void showAfterSupport(JPanel chatArea, JPanel bottomPanel, JScrollPane cs) {
         String[] options = {
-            "That helped, thank you \uD83D\uDC9B",
-            "I want to talk more",
-            "Show me something calming",
-            "Take me home"
+                "That helped, thank you \uD83D\uDC9B",
+                "I want to talk more",
+                "Show me something calming",
+                "Take me home"
         };
         showOptions(chatArea, bottomPanel, cs, options, choice -> {
             addWarmBubble(chatArea, choice, true, ACCENT_TEAL);
@@ -1094,8 +1259,8 @@ public class ShelterWellnessApp extends JFrame {
     // ─── Continue or go home ───
     private void showContinueOrHome(JPanel chatArea, JPanel bottomPanel, JScrollPane cs, boolean happy) {
         String[] options = happy
-            ? new String[] { "Tell me more! \u2728", "I need support actually", "\u2190 Go home" }
-            : new String[] { "I feel a bit better now", "I still need help", "\u2190 Go home" };
+                ? new String[] { "Tell me more! \u2728", "I need support actually", "\u2190 Go home" }
+                : new String[] { "I feel a bit better now", "I still need help", "\u2190 Go home" };
 
         showOptions(chatArea, bottomPanel, cs, options, choice -> {
             addWarmBubble(chatArea, choice, true, ACCENT_TEAL);
@@ -1113,7 +1278,7 @@ public class ShelterWellnessApp extends JFrame {
 
     // ═══════ Utility: show option buttons ═══════
     private void showOptions(JPanel chatArea, JPanel bottomPanel, JScrollPane cs,
-                                String[] options, java.util.function.Consumer<String> onChoice) {
+            String[] options, java.util.function.Consumer<String> onChoice) {
         bottomPanel.removeAll();
 
         for (String opt : options) {
@@ -1121,10 +1286,18 @@ public class ShelterWellnessApp extends JFrame {
                 boolean hover = false;
                 {
                     addMouseListener(new MouseAdapter() {
-                        public void mouseEntered(MouseEvent e) { hover = true; repaint(); }
-                        public void mouseExited(MouseEvent e) { hover = false; repaint(); }
+                        public void mouseEntered(MouseEvent e) {
+                            hover = true;
+                            repaint();
+                        }
+
+                        public void mouseExited(MouseEvent e) {
+                            hover = false;
+                            repaint();
+                        }
                     });
                 }
+
                 @Override
                 protected void paintComponent(Graphics g) {
                     Graphics2D g2 = (Graphics2D) g.create();
@@ -1169,7 +1342,7 @@ public class ShelterWellnessApp extends JFrame {
 
     // ═══════ Utility: delayed bubble with callback ═══════
     private void delayBubble(JPanel chatArea, JScrollPane cs, String text, Runnable after) {
-        Timer tm = new Timer(600 + (int)(Math.random() * 600), ev -> {
+        Timer tm = new Timer(600 + (int) (Math.random() * 600), ev -> {
             addWarmBubble(chatArea, text, false, ACCENT_TEAL);
             chatArea.revalidate();
             scrollToBottom(cs);
@@ -1190,6 +1363,7 @@ public class ShelterWellnessApp extends JFrame {
             sb.setValue(sb.getMaximum());
         });
     }
+
     // ─── Beautiful warm chat bubbles ───
     void addWarmBubble(JPanel area, String text, boolean fromUser, Color accent) {
         JPanel row = new JPanel();
