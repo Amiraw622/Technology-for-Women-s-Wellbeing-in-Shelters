@@ -114,7 +114,6 @@ public class ShelterWellnessApp extends JFrame {
         cardPanel.add(createDetailScreen(DAILY_RECIPES[todayRecipe][0], DAILY_RECIPES[todayRecipe][1],
                 DAILY_RECIPES[todayRecipe][2], "\u2615", ACCENT_ROSE, "TODAY'S RECIPE", "\u2665  Show me another one"),
                 "recipedetail");
-        cardPanel.add(createMoodCheckScreen(), "moodcheck");
         cardPanel.add(createSupportChoiceScreen(), "supportChoice");
         cardPanel.add(createSupportOptionsScreen(), "support");
         cardPanel.add(createHelpResourcesScreen(), "help");
@@ -738,74 +737,7 @@ public class ShelterWellnessApp extends JFrame {
         };
     }
 
-    // ═══════ MOOD CHECK ═══════
-    private JPanel createMoodCheckScreen() {
-        return new GradientPanel() {
-            int hov = -1;
-            final Rectangle backBtn = new Rectangle(), yesBtn = new Rectangle(), noBtn = new Rectangle();
-            {
-                MouseAdapter ma = new MouseAdapter() {
-                    public void mouseMoved(MouseEvent e) {
-                        int p = hov;
-                        hov = backBtn.contains(e.getPoint()) ? 0
-                                : yesBtn.contains(e.getPoint()) ? 1
-                                        : noBtn.contains(e.getPoint()) ? 2 : -1;
-                        setCursor(
-                                hov >= 0 ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) : Cursor.getDefaultCursor());
-                        if (p != hov)
-                            repaint();
-                    }
-
-                    public void mouseClicked(MouseEvent e) {
-                        if (backBtn.contains(e.getPoint()))
-                            navigate("home");
-                        else if (yesBtn.contains(e.getPoint()))
-                            navigate("enjoy");
-                        else if (noBtn.contains(e.getPoint()))
-                            navigate("whatsup");
-                    }
-                };
-                addMouseListener(ma);
-                addMouseMotionListener(ma);
-            }
-
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2 = setup(g);
-                int w = getWidth(), cx = w / 2;
-                drawBack(g2, 20, 20, backBtn);
-                drawAnimal(g2, cx, 60, 0.85f, true);
-                g2.setFont(FONT_TITLE);
-                g2.setColor(TEXT_PRIMARY);
-                ctr(g2, "Does this match", cx, 180);
-                ctr(g2, "your vibe today?", cx, 210);
-                g2.setFont(FONT_SUBTITLE);
-                g2.setColor(TEXT_MUTED);
-                ctr(g2, "We want to pick the best things for you", cx, 240);
-                int bW = 260, bH = 54, bX = cx - bW / 2;
-                yesBtn.setBounds(bX, 280, bW, bH);
-                g2.setColor(hov == 1 ? alphaColor(ACCENT_TEAL, 35) : CARD_BG);
-                g2.fillRoundRect(bX, 280, bW, bH, 16, 16);
-                g2.setColor(alphaColor(ACCENT_TEAL, 70));
-                g2.setStroke(new BasicStroke(1.2f));
-                g2.drawRoundRect(bX, 280, bW, bH, 16, 16);
-                g2.setFont(FONT_BUTTON);
-                g2.setColor(ACCENT_TEAL);
-                ctr(g2, "Yes, feels right!", cx, 313);
-                noBtn.setBounds(bX, 352, bW, bH);
-                g2.setColor(hov == 2 ? alphaColor(ACCENT_PURPLE, 35) : CARD_BG);
-                g2.fillRoundRect(bX, 352, bW, bH, 16, 16);
-                g2.setColor(alphaColor(ACCENT_PURPLE, 70));
-                g2.drawRoundRect(bX, 352, bW, bH, 16, 16);
-                g2.setFont(FONT_BUTTON);
-                g2.setColor(ACCENT_PURPLE);
-                ctr(g2, "Not really...", cx, 385);
-                g2.dispose();
-            }
-        };
-    }
-
+    
 
     // ═══════ SUPPORT OPTIONS ═══════
     private JPanel createSupportOptionsScreen() {
