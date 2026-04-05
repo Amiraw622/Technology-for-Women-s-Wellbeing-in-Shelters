@@ -214,11 +214,13 @@ public class ShelterWellnessApp extends JFrame {
         };
     }
 
-    // ═══════ HOME — 3 cards ═══════
+// ═══════ HOME — 4 cards + help link ═══════
+    // Replace your entire createHomeScreen() method with this:
     private JPanel createHomeScreen() {
         return new GradientPanel() {
             int hov = -1;
             final Rectangle[] cards = { new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle() };
+            final Rectangle helpLink = new Rectangle(); // separate from cards!
             {
                 addMouseMotionListener(new MouseMotionAdapter() {
                     public void mouseMoved(MouseEvent e) {
@@ -229,6 +231,7 @@ public class ShelterWellnessApp extends JFrame {
                                 hov = i;
                                 break;
                             }
+                        if (helpLink.contains(e.getPoint())) hov = 99;
                         setCursor(
                                 hov >= 0 ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) : Cursor.getDefaultCursor());
                         if (prev != hov)
@@ -245,7 +248,8 @@ public class ShelterWellnessApp extends JFrame {
                             navigate("recipedetail");
                         else if (cards[3].contains(e.getPoint()))
                             navigate("supportChoice");
-
+                        else if (helpLink.contains(e.getPoint()))
+                            navigate("help");
                     }
 
                     public void mouseExited(MouseEvent e) {
@@ -255,7 +259,6 @@ public class ShelterWellnessApp extends JFrame {
                         }
                     }
                 });
-
             }
 
             @Override
@@ -266,7 +269,7 @@ public class ShelterWellnessApp extends JFrame {
                 drawAnimal(g2, cx, 50, 0.95f, true);
                 g2.setFont(FONT_TITLE);
                 g2.setColor(new Color(140, 76, 45));
-                ctr(g2, "Here's something gentle for you today 💛", cx, 218);
+                ctr(g2, "Here's something gentle for you today \uD83D\uDC9B", cx, 218);
                 g2.setFont(FONT_SUBTITLE);
                 g2.setColor(TEXT_MUTED);
 
@@ -299,12 +302,13 @@ public class ShelterWellnessApp extends JFrame {
 
                 g2.setFont(FONT_SMALL);
                 g2.setColor(new Color(180, 120, 130));
-                ctr(g2, "\"Take a deep breathe.\"", cx, getHeight() - 36);
+                ctr(g2, "\"Take a deep breath.\"", cx, getHeight() - 36);
 
+                // Help & Support link — uses helpLink, NOT cards[3]
                 int linkY = getHeight() - 70;
                 String helpText = "Help & Support";
                 g2.setFont(FONT_BODY);
-                g2.setColor(ACCENT_PINK);
+                g2.setColor(hov == 99 ? new Color(200, 50, 70) : ACCENT_PINK);
 
                 FontMetrics fm = g2.getFontMetrics();
                 int textW = fm.stringWidth(helpText);
@@ -312,10 +316,282 @@ public class ShelterWellnessApp extends JFrame {
 
                 g2.drawString(helpText, linkX, linkY);
                 g2.drawLine(linkX, linkY + 2, linkX + textW, linkY + 2);
-                g2.dispose();
 
+                helpLink.setBounds(linkX, linkY - 16, textW, 24);
+                g2.dispose();
             }
         };
+    }
+
+    // ═══════ HELP RESOURCES (redesigned with international numbers) ═══════
+    // Replace your entire createHelpResourcesScreen() method with this:
+    private JPanel createHelpResourcesScreen() {
+        JPanel p = new JPanel(new BorderLayout());
+        p.setBackground(new Color(255, 252, 248));
+
+        // ─── Warm top bar ───
+        JPanel top = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setPaint(new GradientPaint(0, 0, new Color(255, 245, 240), 0, getHeight(), new Color(255, 235, 228)));
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                g2.setColor(new Color(230, 190, 175, 80));
+                g2.drawLine(0, getHeight() - 1, getWidth(), getHeight() - 1);
+            }
+        };
+        top.setLayout(new BorderLayout());
+        top.setPreferredSize(new Dimension(0, 60));
+
+        JButton bk = new JButton("\u2190");
+        bk.setFont(new Font("SansSerif", Font.BOLD, 18));
+        bk.setForeground(new Color(180, 120, 100));
+        bk.setOpaque(false);
+        bk.setBorderPainted(false);
+        bk.setContentAreaFilled(false);
+        bk.setFocusPainted(false);
+        bk.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        bk.setPreferredSize(new Dimension(50, 60));
+        bk.addActionListener(e -> navigate("home"));
+        bk.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) { bk.setForeground(new Color(140, 76, 45)); }
+            public void mouseExited(MouseEvent e) { bk.setForeground(new Color(180, 120, 100)); }
+        });
+        top.add(bk, BorderLayout.WEST);
+
+        JPanel titlePanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                // transparent
+            }
+        };
+        titlePanel.setOpaque(false);
+        titlePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 16));
+        JLabel tt = new JLabel("Help & Support");
+        tt.setFont(new Font("SansSerif", Font.BOLD, 20));
+        tt.setForeground(new Color(140, 76, 45));
+        titlePanel.add(tt);
+        top.add(titlePanel, BorderLayout.CENTER);
+        p.add(top, BorderLayout.NORTH);
+
+        // ─── Content ───
+        JPanel content = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setPaint(new GradientPaint(0, 0, new Color(255, 252, 248), 0, getHeight(), new Color(255, 243, 235)));
+                g2.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
+        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
+        content.setBorder(BorderFactory.createEmptyBorder(16, 24, 24, 24));
+
+        // Privacy notice
+        JPanel privacyCard = createWarmCard(
+            "\uD83D\uDD12  Your privacy matters",
+            "If you are in immediate danger, call emergency services.",
+            new Color(180, 140, 120),
+            new Color(255, 248, 242),
+            new Color(240, 220, 210)
+        );
+        content.add(privacyCard);
+        content.add(Box.createVerticalStrut(20));
+
+        // Section label
+        JLabel secTitle = new JLabel("Emergency numbers by region");
+        secTitle.setFont(new Font("SansSerif", Font.BOLD, 16));
+        secTitle.setForeground(new Color(140, 76, 45));
+        secTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
+        secTitle.setBorder(BorderFactory.createEmptyBorder(0, 4, 12, 0));
+        content.add(secTitle);
+
+        // Emergency numbers data
+        String[][] emergencyNumbers = {
+            { "\uD83C\uDDE8\uD83C\uDDF3", "China",       "110",                  "Police" },
+            { "\uD83C\uDDFA\uD83C\uDDF8", "United States","911",                  "All emergencies" },
+            { "\uD83C\uDDE8\uD83C\uDDE6", "Canada",      "911",                  "All emergencies" },
+            { "\uD83C\uDDE6\uD83C\uDDFA", "Australia",   "000 / 112",            "Emergency / mobile" },
+            { "\uD83C\uDDF3\uD83C\uDDFF", "New Zealand", "111",                  "All emergencies" },
+            { "\uD83C\uDDEE\uD83C\uDDF3", "India",       "112 / 14490",          "Emergency / women helpline" },
+            { "\uD83C\uDDEC\uD83C\uDDE7", "United Kingdom","999 / 112",           "All emergencies" },
+            { "\uD83C\uDDEA\uD83C\uDDFA", "Europe",      "112",                  "Universal emergency" },
+            { "\uD83C\uDDF8\uD83C\uDDEC", "Singapore",   "999",                  "Police" },
+            { "\uD83C\uDDEF\uD83C\uDDF5", "Japan",       "110",                  "Police" },
+            { "\uD83C\uDDF0\uD83C\uDDF7", "Korea",       "112",                  "Police / emergency" },
+            { "\uD83C\uDDF9\uD83C\uDDED", "Thailand",    "191",                  "Police" },
+            { "\uD83C\uDDF2\uD83C\uDDFE", "Malaysia",    "999",                  "All emergencies" },
+        };
+
+        for (String[] entry : emergencyNumbers) {
+            JPanel card = createEmergencyCard(entry[0], entry[1], entry[2], entry[3]);
+            content.add(card);
+            content.add(Box.createVerticalStrut(8));
+        }
+
+        content.add(Box.createVerticalStrut(16));
+
+        // Support organizations section
+        JLabel orgTitle = new JLabel("Support organizations");
+        orgTitle.setFont(new Font("SansSerif", Font.BOLD, 16));
+        orgTitle.setForeground(new Color(140, 76, 45));
+        orgTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
+        orgTitle.setBorder(BorderFactory.createEmptyBorder(0, 4, 12, 0));
+        content.add(orgTitle);
+
+        String[][] orgs = {
+            { "National DV Hotline (US)", "1-800-799-7233", "24/7 confidential support" },
+            { "Crisis Text Line",         "Text HOME to 741741", "Free crisis counseling" },
+            { "RAINN (US)",               "1-800-656-4673", "Sexual assault support" },
+            { "Suicide & Crisis Lifeline", "988", "Call or text — 24/7" },
+            { "Women's Law",              "womenslaw.org", "Legal info for survivors" },
+            { "NAMI Helpline",            "1-800-950-6264", "Mental health support" },
+        };
+
+        for (String[] org : orgs) {
+            JPanel card = createOrgCard(org[0], org[1], org[2]);
+            content.add(card);
+            content.add(Box.createVerticalStrut(8));
+        }
+
+        content.add(Box.createVerticalStrut(12));
+
+        // Bottom encouragement
+        JLabel footer = new JLabel("<html><div style='text-align:center;color:#B08878;font-size:11px;'>"
+            + "You are not alone. Reaching out is a sign of strength.</div></html>");
+        footer.setAlignmentX(Component.CENTER_ALIGNMENT);
+        footer.setHorizontalAlignment(SwingConstants.CENTER);
+        content.add(footer);
+
+        JScrollPane sc = new JScrollPane(content);
+        sc.setBorder(null);
+        sc.getViewport().setOpaque(false);
+        sc.setOpaque(false);
+        sc.getVerticalScrollBar().setUnitIncrement(16);
+        sc.getVerticalScrollBar().setPreferredSize(new Dimension(6, 0));
+        p.add(sc, BorderLayout.CENTER);
+
+        return p;
+    }
+
+    // Helper: emergency number card
+    private JPanel createEmergencyCard(String flag, String country, String number, String desc) {
+        JPanel card = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(255, 255, 255));
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
+                g2.setColor(new Color(235, 215, 205, 100));
+                g2.setStroke(new BasicStroke(1f));
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 16, 16);
+                g2.dispose();
+            }
+        };
+        card.setOpaque(false);
+        card.setLayout(new BorderLayout(12, 0));
+        card.setBorder(BorderFactory.createEmptyBorder(12, 16, 12, 16));
+        card.setAlignmentX(Component.LEFT_ALIGNMENT);
+        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 64));
+
+        // Left: flag + country
+        JPanel left = new JPanel();
+        left.setOpaque(false);
+        left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
+        JLabel countryLabel = new JLabel(flag + "  " + country);
+        countryLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
+        countryLabel.setForeground(new Color(100, 60, 45));
+        left.add(countryLabel);
+        JLabel descLabel = new JLabel(desc);
+        descLabel.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        descLabel.setForeground(new Color(170, 135, 125));
+        left.add(descLabel);
+
+        // Right: number
+        JLabel numLabel = new JLabel(number);
+        numLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
+        numLabel.setForeground(new Color(200, 80, 60));
+        numLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+
+        card.add(left, BorderLayout.CENTER);
+        card.add(numLabel, BorderLayout.EAST);
+
+        return card;
+    }
+
+    // Helper: support organization card
+    private JPanel createOrgCard(String name, String contact, String desc) {
+        JPanel card = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(255, 255, 255));
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
+                g2.setColor(new Color(225, 200, 210, 100));
+                g2.setStroke(new BasicStroke(1f));
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 16, 16);
+                g2.dispose();
+            }
+        };
+        card.setOpaque(false);
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setBorder(BorderFactory.createEmptyBorder(12, 16, 12, 16));
+        card.setAlignmentX(Component.LEFT_ALIGNMENT);
+        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
+
+        JLabel nameLabel = new JLabel(name);
+        nameLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
+        nameLabel.setForeground(new Color(100, 60, 45));
+        card.add(nameLabel);
+
+        JLabel contactLabel = new JLabel("\u260E  " + contact);
+        contactLabel.setFont(new Font("SansSerif", Font.BOLD, 13));
+        contactLabel.setForeground(new Color(180, 90, 70));
+        contactLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        card.add(contactLabel);
+
+        JLabel descLabel = new JLabel(desc);
+        descLabel.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        descLabel.setForeground(new Color(170, 135, 125));
+        card.add(descLabel);
+
+        return card;
+    }
+
+    // Helper: warm info card
+    private JPanel createWarmCard(String title, String body, Color textColor, Color bgColor, Color borderColor) {
+        JPanel card = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(bgColor);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
+                g2.setColor(borderColor);
+                g2.setStroke(new BasicStroke(1f));
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 16, 16);
+                g2.dispose();
+            }
+        };
+        card.setOpaque(false);
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setBorder(BorderFactory.createEmptyBorder(12, 16, 12, 16));
+        card.setAlignmentX(Component.LEFT_ALIGNMENT);
+        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 70));
+
+        JLabel titleLabel = new JLabel(title);
+        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 13));
+        titleLabel.setForeground(textColor);
+        card.add(titleLabel);
+
+        JLabel bodyLabel = new JLabel(body);
+        bodyLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        bodyLabel.setForeground(new Color(textColor.getRed(), textColor.getGreen(), textColor.getBlue(), 180));
+        card.add(bodyLabel);
+
+        return card;
     }
 
     // ═══════ DETAIL (music or recipe) ═══════
@@ -738,62 +1014,7 @@ public class ShelterWellnessApp extends JFrame {
     }
 
     // ═══════ HELP RESOURCES ═══════
-    private JPanel createHelpResourcesScreen() {
-        JPanel p = new JPanel(new BorderLayout());
-        p.setBackground(BG_PRIMARY);
-        JButton bk = styledBtn("\u2190 Back");
-        bk.addActionListener(e -> navigate("home"));
-        JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        top.setBackground(BG_SECONDARY);
-        top.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
-        top.add(bk);
-        JLabel tt = new JLabel("Help & Support");
-        tt.setFont(FONT_TITLE);
-        tt.setForeground(ACCENT_PINK);
-        tt.setBorder(BorderFactory.createEmptyBorder(4, 12, 0, 0));
-        top.add(tt);
-        p.add(top, BorderLayout.NORTH);
-        JPanel list = new JPanel();
-        list.setLayout(new BoxLayout(list, BoxLayout.Y_AXIS));
-        list.setBackground(BG_PRIMARY);
-        list.setBorder(BorderFactory.createEmptyBorder(12, 16, 16, 16));
-        JLabel pr = new JLabel("<html><div style='padding:8px;color:#A088B0;font-size:11px;'>"
-                + "\uD83D\uDD12 Your privacy matters. If in immediate danger, call 911.</div></html>");
-        pr.setAlignmentX(Component.LEFT_ALIGNMENT);
-        list.add(pr);
-        list.add(Box.createVerticalStrut(8));
-        for (String[] r : RESOURCES) {
-            JPanel c = new JPanel();
-            c.setLayout(new BoxLayout(c, BoxLayout.Y_AXIS));
-            c.setBackground(new Color(40, 35, 55));
-            c.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(new Color(70, 60, 90), 1),
-                    BorderFactory.createEmptyBorder(12, 16, 12, 16)));
-            c.setAlignmentX(Component.LEFT_ALIGNMENT);
-            c.setMaximumSize(new Dimension(Integer.MAX_VALUE, 90));
-            JLabel n = new JLabel(r[0]);
-            n.setFont(FONT_CARD_TITLE);
-            n.setForeground(TEXT_PRIMARY);
-            c.add(n);
-            JLabel ph = new JLabel("\u260E  " + r[1]);
-            ph.setFont(FONT_BODY);
-            ph.setForeground(ACCENT_TEAL);
-            ph.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            c.add(ph);
-            JLabel d = new JLabel(r[2]);
-            d.setFont(FONT_SMALL);
-            d.setForeground(TEXT_MUTED);
-            c.add(d);
-            list.add(c);
-            list.add(Box.createVerticalStrut(8));
-        }
-        JScrollPane sc = new JScrollPane(list);
-        sc.setBorder(null);
-        sc.getViewport().setBackground(BG_PRIMARY);
-        sc.getVerticalScrollBar().setUnitIncrement(16);
-        p.add(sc, BorderLayout.CENTER);
-        return p;
-    }
+    
 
     // ═══════ MUSIC & EXERCISE ═══════
     private JPanel createMusicExerciseScreen() {
