@@ -463,7 +463,7 @@ public class ShelterWellnessApp extends JFrame {
 
         // Privacy notice
         JPanel privacyCard = createWarmCard(
-                "\uD83D\uDD12  Your privacy matters",
+                "\uD83D\uDD12  Your safety matters",
                 "If you are in immediate danger, call emergency services.",
                 new Color(180, 140, 120),
                 new Color(255, 248, 242),
