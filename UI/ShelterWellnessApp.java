@@ -38,7 +38,7 @@ public class ShelterWellnessApp extends JFrame {
     static final Color ACCENT_WARM = new Color(39, 0, 100);
     static final Color ACCENT_ROSE = new Color(220, 20, 40);
     static final Color ACCENT_PINK = new Color(232, 63, 86);
-    static final Color ACCENT_PURPLE = new Color(176, 124, 216);
+    static final Color ACCENT_PURPLE = new Color(140, 80, 180);
     static final Color ACCENT_CORAL = new Color(216, 90, 48);
     static final Color CARD_BG = new Color(255, 255, 255, 10);
     static final Color CARD_HOVER = new Color(255, 255, 255, 20);
