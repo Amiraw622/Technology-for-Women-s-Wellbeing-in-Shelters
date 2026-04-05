@@ -839,59 +839,253 @@ public class ShelterWellnessApp extends JFrame {
         return p;
     }
 
-    // ═══════ CHAT ═══════
+    // ═══════ CHAT (redesigned - warm & beautiful) ═══════
     private JPanel buildChatScreen(String label, Color accent, boolean sup, String backTo) {
         JPanel p = new JPanel(new BorderLayout());
         p.setBackground(BG_PRIMARY);
-        JButton bk = styledBtn("\u2190 Back");
+
+        // ─── Top bar with animal + status ───
+        JPanel top = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                // Warm gradient header
+                g2.setPaint(new GradientPaint(0, 0, new Color(255, 245, 240), 0, getHeight(), new Color(255, 235, 225)));
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                // Subtle bottom border
+                g2.setColor(new Color(230, 190, 175, 80));
+                g2.drawLine(0, getHeight() - 1, getWidth(), getHeight() - 1);
+            }
+        };
+        top.setLayout(new BorderLayout());
+        top.setPreferredSize(new Dimension(0, 68));
+
+        // Back button (warm style)
+        JButton bk = new JButton("\u2190");
+        bk.setFont(new Font("SansSerif", Font.BOLD, 18));
+        bk.setForeground(new Color(180, 120, 100));
+        bk.setBackground(new Color(0, 0, 0, 0));
+        bk.setOpaque(false);
+        bk.setBorderPainted(false);
+        bk.setContentAreaFilled(false);
+        bk.setFocusPainted(false);
+        bk.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        bk.setPreferredSize(new Dimension(50, 68));
         bk.addActionListener(e -> navigate(backTo));
-        JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        top.setBackground(BG_SECONDARY);
-        top.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
-        top.add(bk);
-        JLabel tt = new JLabel(label);
-        tt.setFont(FONT_CARD_TITLE);
-        tt.setForeground(accent);
-        tt.setBorder(BorderFactory.createEmptyBorder(4, 12, 0, 0));
-        top.add(tt);
+        bk.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) { bk.setForeground(new Color(140, 76, 45)); }
+            public void mouseExited(MouseEvent e) { bk.setForeground(new Color(180, 120, 100)); }
+        });
+        top.add(bk, BorderLayout.WEST);
+
+        // Center: animal icon + name + status
+        JPanel centerInfo = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                // transparent
+            }
+
+            @Override
+            public Dimension getPreferredSize() {
+                return new Dimension(200, 68);
+            }
+        };
+        centerInfo.setOpaque(false);
+        centerInfo.setLayout(null);
+
+        // We'll paint the animal + text in the top panel's paint instead
+        JPanel headerPaint = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                int cx = getWidth() / 2;
+
+                // Draw small animal avatar
+                int avatarSize = 42;
+                int avatarX = cx - 70;
+                int avatarY = 13;
+
+                // Avatar circle background
+                g2.setColor(new Color(255, 220, 210));
+                g2.fillOval(avatarX, avatarY, avatarSize, avatarSize);
+                g2.setColor(new Color(230, 180, 165));
+                g2.setStroke(new BasicStroke(1.5f));
+                g2.drawOval(avatarX, avatarY, avatarSize, avatarSize);
+
+                // Draw tiny animal face inside circle
+                int acx = avatarX + avatarSize / 2;
+                int acy = avatarY + avatarSize / 2 + 2;
+                // Ears
+                g2.setColor(new Color(200, 181, 212));
+                g2.fillOval(acx - 14, acy - 18, 10, 14);
+                g2.fillOval(acx + 4, acy - 18, 10, 14);
+                // Inner ears
+                g2.setColor(new Color(240, 214, 232));
+                g2.fillOval(acx - 12, acy - 15, 6, 9);
+                g2.fillOval(acx + 6, acy - 15, 6, 9);
+                // Head
+                g2.setColor(new Color(200, 181, 212));
+                g2.fillOval(acx - 12, acy - 10, 24, 20);
+                // Eyes
+                g2.setColor(new Color(74, 63, 85));
+                g2.fillOval(acx - 6, acy - 3, 4, 5);
+                g2.fillOval(acx + 2, acy - 3, 4, 5);
+                // Eye shine
+                g2.setColor(Color.WHITE);
+                g2.fillOval(acx - 5, acy - 4, 2, 2);
+                g2.fillOval(acx + 3, acy - 4, 2, 2);
+                // Nose
+                g2.setColor(new Color(232, 160, 191));
+                g2.fillOval(acx - 2, acy + 2, 4, 3);
+                // Smile
+                g2.setColor(new Color(124, 111, 138));
+                g2.setStroke(new BasicStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                g2.draw(new QuadCurve2D.Float(acx - 4, acy + 6, acx, acy + 9, acx + 4, acy + 6));
+                // Blush
+                g2.setColor(new Color(240, 200, 200, 100));
+                g2.fillOval(acx - 14, acy, 6, 4);
+                g2.fillOval(acx + 8, acy, 6, 4);
+
+                // Name + status
+                int textX = avatarX + avatarSize + 12;
+                g2.setFont(new Font("SansSerif", Font.BOLD, 15));
+                g2.setColor(new Color(140, 76, 45));
+                g2.drawString("Your friend", textX, 35);
+                g2.setFont(new Font("SansSerif", Font.PLAIN, 11));
+                g2.setColor(new Color(180, 140, 130));
+                g2.drawString("always here for you \u2665", textX, 50);
+
+                g2.dispose();
+            }
+        };
+        headerPaint.setOpaque(false);
+        top.add(headerPaint, BorderLayout.CENTER);
+
         p.add(top, BorderLayout.NORTH);
-        JPanel chat = new JPanel();
-        chat.setLayout(new BoxLayout(chat, BoxLayout.Y_AXIS));
-        chat.setBackground(BG_PRIMARY);
-        chat.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
-        bubble(chat, sup ? "I'm here for you. Share anything, or we can sit together quietly."
-                : "Hey there! What's on your mind? I'm happy to chat!", false, accent);
-        JScrollPane cs = new JScrollPane(chat);
+
+        // ─── Chat area with warm background ───
+        JPanel chatArea = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setPaint(new GradientPaint(0, 0, new Color(255, 252, 248), 0, getHeight(), new Color(255, 243, 235)));
+                g2.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
+        chatArea.setLayout(new BoxLayout(chatArea, BoxLayout.Y_AXIS));
+        chatArea.setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
+
+        // Initial greeting
+        String greeting = sup
+            ? "I'm here for you. You can share anything, or we can just sit together quietly. \u2764"
+            : "Hey there! What's on your mind today? I'd love to hear from you \u2728";
+        addWarmBubble(chatArea, greeting, false, accent);
+
+        JScrollPane cs = new JScrollPane(chatArea);
         cs.setBorder(null);
-        cs.getViewport().setBackground(BG_PRIMARY);
+        cs.getViewport().setOpaque(false);
+        cs.setOpaque(false);
         cs.getVerticalScrollBar().setUnitIncrement(16);
+        // Hide scrollbar track but keep functionality
+        cs.getVerticalScrollBar().setPreferredSize(new Dimension(6, 0));
         p.add(cs, BorderLayout.CENTER);
-        JPanel bar = new JPanel(new BorderLayout(8, 0));
-        bar.setBackground(BG_SECONDARY);
-        bar.setBorder(BorderFactory.createEmptyBorder(10, 12, 10, 12));
-        JTextField in = new JTextField();
-        in.setFont(FONT_CHAT);
-        in.setBackground(new Color(50, 45, 65));
-        in.setForeground(TEXT_PRIMARY);
-        in.setCaretColor(TEXT_PRIMARY);
-        in.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(70, 60, 90)),
-                BorderFactory.createEmptyBorder(8, 12, 8, 12)));
-        JButton send = new JButton("\u2191");
-        send.setFont(new Font("SansSerif", Font.BOLD, 18));
-        send.setForeground(accent);
-        send.setBackground(alphaColor(accent, 25));
-        send.setBorder(BorderFactory.createEmptyBorder(6, 14, 6, 14));
-        send.setFocusPainted(false);
-        send.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        Runnable act = () -> {
+
+        // ─── Input bar (warm, rounded, beautiful) ───
+        JPanel bar = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setPaint(new GradientPaint(0, 0, new Color(255, 245, 238), 0, getHeight(), new Color(255, 240, 230)));
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                // Top border
+                g2.setColor(new Color(230, 200, 185, 60));
+                g2.drawLine(0, 0, getWidth(), 0);
+            }
+        };
+        bar.setLayout(new BorderLayout(10, 0));
+        bar.setBorder(BorderFactory.createEmptyBorder(12, 16, 12, 16));
+
+        // Rounded text input
+        JTextField in = new JTextField() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(getBackground());
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
+                super.paintComponent(g);
+            }
+        };
+        in.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        in.setBackground(new Color(255, 255, 255));
+        in.setForeground(new Color(100, 70, 60));
+        in.setCaretColor(new Color(140, 76, 45));
+        in.setOpaque(false);
+        in.setBorder(BorderFactory.createCompoundBorder(
+            new AbstractBorder() {
+                @Override
+                public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {
+                    Graphics2D g2 = (Graphics2D) g;
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    g2.setColor(new Color(220, 185, 170));
+                    g2.setStroke(new BasicStroke(1.2f));
+                    g2.drawRoundRect(x, y, w - 1, h - 1, 24, 24);
+                }
+                @Override
+                public Insets getBorderInsets(Component c) { return new Insets(0, 0, 0, 0); }
+            },
+            BorderFactory.createEmptyBorder(10, 16, 10, 16)
+        ));
+
+        // Send button (warm circle)
+        JButton send = new JButton() {
+            boolean hover = false;
+            {
+                setPreferredSize(new Dimension(42, 42));
+                setContentAreaFilled(false);
+                setBorderPainted(false);
+                setFocusPainted(false);
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                addMouseListener(new MouseAdapter() {
+                    public void mouseEntered(MouseEvent e) { hover = true; repaint(); }
+                    public void mouseExited(MouseEvent e) { hover = false; repaint(); }
+                });
+            }
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                // Circle background
+                Color btnColor = hover ? new Color(180, 100, 80) : new Color(200, 130, 110);
+                g2.setColor(btnColor);
+                g2.fillOval(1, 1, 40, 40);
+                // Arrow
+                g2.setColor(Color.WHITE);
+                g2.setFont(new Font("SansSerif", Font.BOLD, 18));
+                FontMetrics fm = g2.getFontMetrics();
+                String arrow = "\u2191";
+                g2.drawString(arrow, 21 - fm.stringWidth(arrow) / 2, 26);
+                g2.dispose();
+            }
+        };
+
+        Runnable sendAction = () -> {
             String t2 = in.getText().trim();
-            if (t2.isEmpty())
-                return;
-            bubble(chat, t2, true, accent);
+            if (t2.isEmpty()) return;
+            addWarmBubble(chatArea, t2, true, accent);
             in.setText("");
+            chatArea.revalidate();
+            SwingUtilities.invokeLater(() -> {
+                JScrollBar sb = cs.getVerticalScrollBar();
+                sb.setValue(sb.getMaximum());
+            });
             Timer tm = new Timer(600 + (int) (Math.random() * 800), ev -> {
-                bubble(chat, reply(t2, sup), false, accent);
-                chat.revalidate();
+                addWarmBubble(chatArea, reply(t2, sup), false, accent);
+                chatArea.revalidate();
                 SwingUtilities.invokeLater(() -> {
                     JScrollBar sb = cs.getVerticalScrollBar();
                     sb.setValue(sb.getMaximum());
@@ -900,30 +1094,86 @@ public class ShelterWellnessApp extends JFrame {
             tm.setRepeats(false);
             tm.start();
         };
-        send.addActionListener(e -> act.run());
-        in.addActionListener(e -> act.run());
+        send.addActionListener(e -> sendAction.run());
+        in.addActionListener(e -> sendAction.run());
+
         bar.add(in, BorderLayout.CENTER);
         bar.add(send, BorderLayout.EAST);
         p.add(bar, BorderLayout.SOUTH);
+
         return p;
     }
 
-    void bubble(JPanel a, String t, boolean u, Color ac) {
-        JPanel b = new JPanel(new BorderLayout());
-        b.setAlignmentX(u ? Component.RIGHT_ALIGNMENT : Component.LEFT_ALIGNMENT);
-        b.setMaximumSize(new Dimension(320, 200));
-        JLabel l = new JLabel("<html><div style='padding:10px 14px;width:240px;color:" + (u ? "#E8E2F0" : "#D0C8E0")
-                + ";font-size:13px;'>" + t + "</div></html>");
-        l.setOpaque(true);
-        l.setBackground(u ? alphaColor(ac, 30) : new Color(50, 45, 65));
-        l.setBorder(BorderFactory.createLineBorder(alphaColor(ac, u ? 40 : 15), 1));
-        b.setOpaque(false);
-        b.add(l);
-        a.add(b);
-        a.add(Box.createVerticalStrut(8));
+    // ─── Beautiful warm chat bubbles ───
+    void addWarmBubble(JPanel area, String text, boolean fromUser, Color accent) {
+        JPanel row = new JPanel();
+        row.setLayout(new BoxLayout(row, BoxLayout.X_AXIS));
+        row.setOpaque(false);
+        row.setAlignmentX(Component.LEFT_ALIGNMENT);
+        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 300));
+
+        if (fromUser) {
+            row.add(Box.createHorizontalGlue());
+        }
+
+        JPanel bubble = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                int w = getWidth(), h = getHeight();
+                int arc = 20;
+
+                if (fromUser) {
+                    // User bubble: warm coral/pink gradient
+                    g2.setPaint(new GradientPaint(0, 0, new Color(220, 140, 120), w, h, new Color(200, 120, 105)));
+                    g2.fillRoundRect(0, 0, w, h, arc, arc);
+                } else {
+                    // Friend bubble: soft cream with warm border
+                    g2.setColor(new Color(255, 255, 255));
+                    g2.fillRoundRect(0, 0, w, h, arc, arc);
+                    g2.setColor(new Color(230, 200, 185, 120));
+                    g2.setStroke(new BasicStroke(1f));
+                    g2.drawRoundRect(0, 0, w - 1, h - 1, arc, arc);
+                }
+                g2.dispose();
+            }
+
+            @Override
+            public Dimension getPreferredSize() {
+                Dimension d = super.getPreferredSize();
+                return new Dimension(Math.min(d.width, 280), d.height);
+            }
+
+            @Override
+            public Dimension getMaximumSize() {
+                return getPreferredSize();
+            }
+        };
+        bubble.setLayout(new BorderLayout());
+        bubble.setOpaque(false);
+
+        JLabel label = new JLabel("<html><div style='padding:10px 14px;width:220px;font-size:13px;color:"
+            + (fromUser ? "#FFFFFF" : "#6B4A3C")
+            + ";'>" + text + "</div></html>");
+        label.setOpaque(false);
+        bubble.add(label);
+
+        row.add(bubble);
+
+        if (!fromUser) {
+            row.add(Box.createHorizontalGlue());
+        }
+
+        area.add(row);
+        area.add(Box.createVerticalStrut(10));
     }
 
+    // ═══════ 加到 addWarmBubble 方法后面 ═══════
+
     void refreshRecipeDetail() {
+        // 移除旧的 recipedetail 面板 (index 2)，插入新的
         cardPanel.remove(2);
         cardPanel.add(createDetailScreen(
                 DAILY_RECIPES[todayRecipe][0],
@@ -932,12 +1182,13 @@ public class ShelterWellnessApp extends JFrame {
                 "\u2615",
                 ACCENT_ROSE,
                 "TODAY'S RECIPE",
-                "show me another one"), "recipedetail", 2);
+                "\u2665  Show me another one"), "recipedetail", 2);
         cardPanel.revalidate();
         cardPanel.repaint();
     }
 
     void refreshMusicDetail() {
+        // 移除旧的 musicdetail 面板 (index 1)，插入新的
         cardPanel.remove(1);
         cardPanel.add(createDetailScreen(
                 DAILY_MUSIC[todayMusic][0],
@@ -946,7 +1197,7 @@ public class ShelterWellnessApp extends JFrame {
                 "\u266B",
                 ACCENT_WARM,
                 "TODAY'S MUSIC",
-                "Another one"), "musicdetail", 1);
+                "\u25B6  Play now"), "musicdetail", 1);
         cardPanel.revalidate();
         cardPanel.repaint();
     }
