@@ -244,8 +244,6 @@ public class ShelterWellnessApp extends JFrame {
                         else if (cards[2].contains(e.getPoint()))
                             navigate("recipedetail");
                         else if (cards[3].contains(e.getPoint()))
-                            navigate("help");
-                        else if (cards[3].contains(e.getPoint()))
                             navigate("supportChoice");
 
                     }
@@ -314,8 +312,6 @@ public class ShelterWellnessApp extends JFrame {
 
                 g2.drawString(helpText, linkX, linkY);
                 g2.drawLine(linkX, linkY + 2, linkX + textW, linkY + 2);
-
-                cards[3].setBounds(linkX, linkY - 18, textW, 24);
                 g2.dispose();
 
             }
@@ -1036,7 +1032,7 @@ public class ShelterWellnessApp extends JFrame {
         g.drawString(t, x + 64, y + 33);
 
         g.setFont(FONT_SMALL);
-        g.setColor(alphaColor(ac, 90));
+        g.setColor(new Color(160, 120, 130));
         g.drawString(h, x + 64, y + 53);
     }
 
