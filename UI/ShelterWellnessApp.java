@@ -562,13 +562,13 @@ public class ShelterWellnessApp extends JFrame {
         card.setLayout(new BorderLayout(12, 0));
         card.setBorder(BorderFactory.createEmptyBorder(12, 16, 12, 16));
         card.setAlignmentX(Component.LEFT_ALIGNMENT);
-        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 64));
+        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 90));
 
         // Left: flag + country
         JPanel left = new JPanel();
         left.setOpaque(false);
         left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
-        JLabel countryLabel = new JLabel(flag + "  " + country);
+        JLabel countryLabel = new JLabel(country);
         countryLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
         countryLabel.setForeground(new Color(100, 60, 45));
         left.add(countryLabel);
@@ -608,7 +608,7 @@ public class ShelterWellnessApp extends JFrame {
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBorder(BorderFactory.createEmptyBorder(12, 16, 12, 16));
         card.setAlignmentX(Component.LEFT_ALIGNMENT);
-        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
+        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 90));
 
         JLabel nameLabel = new JLabel(name);
         nameLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
@@ -648,7 +648,7 @@ public class ShelterWellnessApp extends JFrame {
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBorder(BorderFactory.createEmptyBorder(12, 16, 12, 16));
         card.setAlignmentX(Component.LEFT_ALIGNMENT);
-        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 70));
+        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 90));
 
         JLabel titleLabel = new JLabel(title);
         titleLabel.setFont(new Font("SansSerif", Font.BOLD, 13));
